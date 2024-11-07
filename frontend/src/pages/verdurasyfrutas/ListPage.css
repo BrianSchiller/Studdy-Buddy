@@ -1,0 +1,61 @@
+/* ListPage.css */
+
+/* Container styles */
+.welcome-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header styles */
+.welcome-container h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Paragraph styles */
+.welcome-container p {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* List styles */
+.welcome-container ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.welcome-container li {
+    font-size: 18px;
+    color: #444;
+    padding: 10px;
+    background-color: #e6f7ff;
+    border: 1px solid #b3e0ff;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+/* Button styles */
+.welcome-container button {
+    font-size: 18px;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.welcome-container button:hover {
+    background-color: #0056b3;
+}

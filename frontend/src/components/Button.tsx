@@ -1,8 +1,9 @@
 import React from 'react';
-import styled from "styled-components";
+import styled from 'styled-components';
 
 interface ButtonProps {
-    size?: string;
+    size?: 'small' | 'medium' | 'large';
+    onClick?: () => void;
 }
 
 const StyledButton = styled.button<{ $size?: string }>`
@@ -14,20 +15,22 @@ const StyledButton = styled.button<{ $size?: string }>`
     border-radius: 10px;
     font-size: 12px;
     cursor: pointer;
-`
+`;
 
-
-export const Button = (
-    { size, children }: React.PropsWithChildren<ButtonProps>
-) => {
+export const Button: React.FC<React.PropsWithChildren<ButtonProps>> = ({
+    size = 'small',
+    onClick,
+    children,
+}) => {
     const sizes = {
         small: '100px',
         medium: '150px',
-        large: '200px'
-    }
-       return (
-        <StyledButton $size={sizes[size as keyof typeof sizes]}>
+        large: '200px',
+    };
+
+    return (
+        <StyledButton $size={sizes[size]} onClick={onClick}>
             {children}
         </StyledButton>
-    )
-}
+    );
+};

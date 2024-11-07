@@ -15,7 +15,7 @@ pytest>=7.0,<8.0
 pytest-django>=4.5,<5.0
 
 # Optional: Django admin for managing users, etc.
-django-admin>=0.1,<1.0
+django-admin>=0.1,<6.0
 
 # Optional: For managing environment variables
 python-dotenv>=0.20,<1.0
