@@ -1,5 +1,7 @@
 export interface VocabWord {
-    word: string;
-    translation: string;
-    topic: string;
+    id: number;
+    spanish: string;
+    english: string;
+    image: string;
+    sentence: string;
 }
