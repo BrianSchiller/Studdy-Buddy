@@ -50,7 +50,7 @@ const LoginPage: React.FC = () => {
           </div>
           <h1></h1>
         </div>
-        {/* Main content container RIGHT */}
+        {/* Main content container RIGHT hej*/}
         <div className="login-content">
           <h1>Log in</h1>
           <div className="login-container">
