@@ -1,22 +1,139 @@
 .login-container {
-    display: flex;
+    display: ruby-text;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
+  
+  
 }
 
 .login-container h1 {
     margin-bottom: 20px;
+    
+    
 }
 
 .login-container input {
     margin-bottom: 10px;
     padding: 10px;
     font-size: 16px;
+    width: 50%;
+    border-radius: 5px;
+    
+   
 }
 
 .login-container button {
     padding: 10px 20px;
     font-size: 16px;
+    background: #692DBD;
+    border-radius: 5px;
+    color: #FFFEFE;
+    width: 54.5%;
 }
+
+
+  /* Background Log in */
+.background{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: #8955F1;
+    overflow: hidden;
+  }
+  
+ 
+  .ellipse-5 {
+    position: absolute;
+    width: 35vw;
+    height: 35vw;
+    left: -10vw;
+    top: -10vh;
+    background: #692DBD;
+    border-radius: 50%;
+  }
+  
+  
+  .ellipse-6 {
+    position: absolute;
+    width: 70vw;
+    height: 70vw;
+    left: 60vw;
+    top: 40vh;
+    background: #692DBD;
+    border-radius: 50%;
+  }
+  
+  /* 3x1 grid*/
+  .rectangle-14 {
+    display: grid;
+    grid-template-columns: 45% 10% 45% ;
+    position: absolute;
+    width: 85%;
+    height: 80vh;
+    left: 8%;
+    top: 10vh;
+    background: #FFFEFE;
+    border-radius: 5px;
+  }
+  
+  /* Frame and Dots */
+  .dot-frame {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    position: absolute;
+    width: 12vw;
+    height: 5vh;
+    bottom: 5vh;
+    right: 5vw;
+  }
+  
+  .dot {
+    width: 1vw;
+    height: 1vw;
+    background: #DDCDFC;
+    border-radius: 50%;
+  }
+
+  .login-content{
+    display: grid;
+    grid-template-rows: 20% 20% 20% 20% 10% 10%;
+    margin-top: 5%;
+    margin-left: 5%;
+    font-family: sans-serif;
+    font-style: normal;
+    color: #000000;
+  }
+  .login-content h2{
+    font-size: medium;
+  }
+
+  .welcome-content{
+    margin-top: 5%;
+    margin-left: 5%;
+font-family: sans-serif;
+font-style: normal;
+color: #000000;
+
+  }
+
+  .welcome-image{
+   width: 65%;
+position: relative;
+left: 20%;
+margin-top: 20%;
+  }
+
+  .middle-content{
+    position: relative;
+    height: 50%;
+  }
+  .middle-Line{
+    position: relative;
+    height: 400px;
+    margin-top: 50%;
+    left: 50%;
+  }
+
