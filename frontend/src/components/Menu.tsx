@@ -53,7 +53,7 @@ export const Menu = () => {
             <nav>
                 <ul>
                     <li>Desktop</li>
-                    <li>Progress</li>
+                    <li>Quiz</li>
                     <li>Courses</li>
                 </ul>
             </nav>
