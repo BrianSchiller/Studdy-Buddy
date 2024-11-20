@@ -6,6 +6,7 @@ import WelcomePage from './pages/welcome/WelcomPage';
 import ListPage from './pages/verdurasyfrutas/ListPage'
 import './App.css'; 
 import QuizPage from './pages/verdurasyfrutas/QuizPage';
+import QuizComplete from "./pages/quizcomplete/QuizCompletePage";
 // Import other pages as needed
 
 const App: React.FC = () => {
@@ -16,6 +17,7 @@ const App: React.FC = () => {
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/verdurasyfrutas" element={<ListPage />} />
         <Route path="/verdurasyfrutas/quiz" element={<QuizPage />} />
+        <Route path="/quiz-complete" element={<QuizComplete />} />
         {/* Add more routes here as you create more pages */}
       </Routes>
     </Router>

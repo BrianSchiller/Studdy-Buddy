@@ -13,6 +13,8 @@ interface MultipleChoiceProps {
     question: string;
     options: string[];
     onAnswerSelect: (answer: string) => void;
+    selectedAnswer: string | null;
+    correctAnswer: string | null;
     width?: string;
     padding?: string;
     radius?: boolean;
@@ -33,74 +35,90 @@ const StyledMultipleChoice = styled.div<StyledMultipleChoiceProps>`
 
 const OptionsGrid = styled.div`
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2x2 Grid */
-    gap: 20px; /* Spacing between buttons */
-    justify-items: center; /* Center buttons in their grid cells */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    justify-items: center;
 `;
 
-const StyledOptionWrapper = styled.div<{ $isSelected: boolean }>`
-    position: relative;
+const StyledOptionWrapper = styled.div<{
+    $isSelected: boolean;
+    $isCorrect: boolean;
+    $isIncorrect: boolean;
+}>`
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 10px;
-    border: ${({ $isSelected }) => ($isSelected ? "3px solid #2196F3" : "3px solid transparent")};
+    border: ${({ $isSelected, $isCorrect, $isIncorrect }) =>
+        $isCorrect
+            ? "3px solid #4CAF50" // Green
+            : $isIncorrect
+            ? "3px solid #F44336" // Red
+            : $isSelected
+            ? "3px solid #2196F3" // Blue
+            : "3px solid transparent"};
     border-radius: 12px;
     transition: all 0.3s ease;
     margin: 8px;
 `;
 
-const StyledOptionButton = styled.button<{ $isSelected: boolean }>`
+const StyledOptionButton = styled.button<{
+    $isSelected: boolean;
+    $isCorrect: boolean;
+    $isIncorrect: boolean;
+}>`
     width: 150px;
     height: 50px;
-    background-color: ${({ $isSelected }) => ($isSelected ? "#2196F3" : "#DDCDFC99")}; /* Azurblau als aktive Farbe */
+    background-color: ${({ $isSelected, $isCorrect, $isIncorrect }) =>
+        $isCorrect
+            ? "#A5D6A7"
+            : $isIncorrect
+            ? "#EF9A9A"
+            : $isSelected
+            ? "#2196F3"
+            : "#DDCDFC99"};
     color: black;
-    font: Instrument Sans;
-    border: 2px solid ${({ $isSelected }) => ($isSelected ? "#1976D2" : "transparent")}; /* Dunkleres Azurblau für den Rahmen */
-    border-radius: 12px; /* Runde Ecken */
+    border-radius: 12px;
     font-size: 16px;
-    cursor: pointer;
-    margin: 10px; /* Abstand zu anderen Buttons */
-    transition: background-color 0.3s ease, border-color 0.3s ease; /* Weiche Übergänge */
+    cursor: ${({ $isCorrect, $isIncorrect }) => ($isCorrect || $isIncorrect ? "default" : "pointer")};
+    transition: background-color 0.3s ease;
 
     &:hover {
-        background-color: ${({ $isSelected }) => ($isSelected ? "#1E88E5" : "#B0A0D9")}; /* Helleres Blau beim Hover */
+        background-color: ${({ $isSelected, $isCorrect, $isIncorrect }) =>
+            !$isCorrect && !$isIncorrect ? ($isSelected ? "#1E88E5" : "#B0A0D9") : "inherit"};
     }
 `;
-
 
 export const MultipleChoice = ({
     question,
     options,
     onAnswerSelect,
-    width,
-    padding,
-    radius,
-    shadow,
-    backgroundColor,
+    selectedAnswer,
+    correctAnswer,
 }: MultipleChoiceProps) => {
-    const [selectedOption, setSelectedOption] = React.useState<string | null>(null);
-
     const handleOptionClick = (option: string) => {
-        setSelectedOption(option);
-        onAnswerSelect(option);
+        if (correctAnswer === null) {
+            onAnswerSelect(option);
+        }
     };
 
     return (
-        <StyledMultipleChoice
-            $width={width}
-            $padding={padding}
-            $radius={radius}
-            $shadow={shadow}
-            $backgroundColor={backgroundColor}
-        >
+        <StyledMultipleChoice>
             <h3>{question}</h3>
             <OptionsGrid>
                 {options.map((option, index) => (
-                    <StyledOptionWrapper key={index} $isSelected={selectedOption === option}>
+                    <StyledOptionWrapper
+                        key={index}
+                        $isSelected={selectedAnswer === option}
+                        $isCorrect={correctAnswer === option && selectedAnswer !== null}
+                        $isIncorrect={selectedAnswer === option && correctAnswer !== option}
+                    >
                         <StyledOptionButton
-                            $isSelected={selectedOption === option}
+                            $isSelected={selectedAnswer === option}
+                            $isCorrect={correctAnswer === option}
+                            $isIncorrect={selectedAnswer === option && correctAnswer !== option}
                             onClick={() => handleOptionClick(option)}
+                            disabled={correctAnswer !== null}
                         >
                             {option}
                         </StyledOptionButton>

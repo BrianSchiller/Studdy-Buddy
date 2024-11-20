@@ -15,6 +15,12 @@ export const StyledFlex = styled.div<StyledFlexProps>`
     flex-direction: ${({ $direction }) => $direction || 'row'};
 `;
 
+export const StyledOptionWrapper = styled.div<{ $isSelected: boolean; $isCorrect?: boolean; $isIncorrect?: boolean }>`
+    border: ${({ $isSelected, $isCorrect, $isIncorrect }) =>
+        $isCorrect ? '3px solid green' : $isIncorrect ? '3px solid red' : $isSelected ? '3px solid #2196F3' : '3px solid transparent'};
+    transition: all 0.3s ease;
+`;
+
 export const StyledContainer = styled.div`
     display: flex;
     width: 100%;
@@ -86,4 +92,26 @@ export const NavigationFooter = styled.div`
     width: 95%;
     padding: 10px 20px;
     bottom: 0; /* Sticks at the bottom of the page */
+`;
+
+export const ProgressBar = styled.div<{ progress: number }>`
+    width: 100%;
+    height: 8px;
+    background-color: #ddd;
+    position: relative;
+    margin-top: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0;
+        background-color: #4caf50;
+        transition: width 0.5s ease-in-out;
+        width: ${({ progress }) => `${progress}%`};
+    }
 `;
