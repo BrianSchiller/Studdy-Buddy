@@ -61,28 +61,29 @@ export const MultipleChoice_Quiz = styled.div`
     padding-bottom: 80px; /* Ensure enough space for the footer and Next button */
 `;
 
-export const NavigationHeader = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 10px 20px;
-    background-color: rgba(240, 240, 240, 0.8);
-    border-bottom: 1px solid rgba(200, 200, 200, 0.5);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-`;
+// export const NavigationHeader = styled.div`
+//     display: flex;
+//     flex-direction: row;
+//     justify-content: space-between;
+//     align-items: center;
+//     width: 100%;
+//     padding: 10px 20px;
+//     background-color: rgba(240, 240, 240, 0.8);
+//     border-bottom: 1px solid rgba(200, 200, 200, 0.5);
+//     position: sticky;
+//     top: 0;
+//     z-index: 1000;
+// `;
 
 export const NextButtonWrapper = styled.div`
-  position: absolute;
-  bottom: 80px; /* Position directly above the footer */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  display: flex;
-  justify-content: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+    @media (max-width: 768px) {
+        margin-top: 15px;
+    }
 `;
 
 export const NavigationFooter = styled.div`

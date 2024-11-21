@@ -3,6 +3,7 @@ import { VocabWord } from '../../interfaces';
 
 export interface QuizQuestion {
     question: string; // English word
+    image: string;
     correctAnswer: string; // Spanish translation
     options: string[]; // Randomized answer options
 }
@@ -31,6 +32,7 @@ export const generateQuizQuestions = (words: VocabWord[], numOptions = 4): QuizQ
             question: word.english,
             correctAnswer: word.spanish,
             options,
+            image: word.image, // Include the image URL for the question
         };
     });
 };

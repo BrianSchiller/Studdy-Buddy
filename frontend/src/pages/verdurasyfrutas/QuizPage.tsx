@@ -4,15 +4,14 @@ import { Text } from "../../components/Text";
 import { Menu } from "../../components/Menu";
 import { Button } from "../../components/Button";
 import { MultipleChoice } from "../../components/MultipleChoice";
+import { NavigationHeader } from "../../components/NavigationHeader";
 import { fetchVocabWords } from "../../api";
 import { generateQuizQuestions, QuizQuestion } from "./quizUtils";
 import {
     MultipleChoice_Quiz,
     DashboardPanel,
-    NavigationHeader,
     NavigationFooter,
     StyledContainer,
-    ProgressBar,
     NextButtonWrapper,
 } from "./stylesQuizPage";
 
@@ -22,7 +21,8 @@ const QuizPage: React.FC = () => {
     // States
     const [questions, setQuestions] = useState<QuizQuestion[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // Initial loading state
+    const [loadingResults, setLoadingResults] = useState(false); // Loading results state
     const [answerSelected, setAnswerSelected] = useState<string | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [buttonState, setButtonState] = useState<"check" | "next" | "finish">("check");
@@ -66,7 +66,13 @@ const QuizPage: React.FC = () => {
             setIsCorrect(null);
             setButtonState("check");
         } else if (buttonState === "finish") {
-            navigate("/quiz-complete", { state: { score, total: questions.length } });
+            // Show loading indicator before navigating
+            setLoadingResults(true);
+
+            // Simulate loading and then navigate
+            setTimeout(() => {
+                navigate("/quiz-complete", { state: { score, total: questions.length } });
+            }, 2000); // Adjust the timeout duration as needed
         }
     };
 
@@ -74,6 +80,18 @@ const QuizPage: React.FC = () => {
         navigate("/welcome");
     };
 
+    // Render loading screen when results are being prepared
+    if (loadingResults) {
+        return (
+            <StyledContainer>
+                <Text size="24px" weight="bold">
+                    Preparing your results...
+                </Text>
+            </StyledContainer>
+        );
+    }
+
+    // Render loading screen when quiz questions are loading
     if (loading) {
         return (
             <StyledContainer>
@@ -88,32 +106,36 @@ const QuizPage: React.FC = () => {
         <StyledContainer>
             <Menu />
             <DashboardPanel>
+                <NavigationHeader
+                    title="Click on the right matching word"
+                    imageSrc="https://placehold.co/95" // Replace with your image path or URL
+                    currentIndex={currentIndex}
+                    totalQuestions={questions.length}
+                    progress={((currentIndex) / questions.length) * 100}
+                />
                 <MultipleChoice_Quiz>
-                    <NavigationHeader>
-                        <Text size="24px" weight="bold">
-                            Question {currentIndex + 1} of {questions.length}
-                        </Text>
-                        <ProgressBar progress={(currentIndex / questions.length) * 100} />
-                    </NavigationHeader>
                     {questions.length > 0 && (
                         <MultipleChoice
                             question={questions[currentIndex].question}
+                            image="https://placehold.co/95" // Pass the image to the component
                             options={questions[currentIndex].options}
                             onAnswerSelect={handleAnswerSelect}
                             selectedAnswer={answerSelected}
                             correctAnswer={isCorrect === null ? null : questions[currentIndex].correctAnswer}
                         />
                     )}
-                    <Button
-                        onClick={handleButtonClick}
-                        disabled={buttonState === "check" && answerSelected === null}
-                    >
-                        {buttonState === "check"
-                            ? "Check"
-                            : buttonState === "next"
-                            ? "Next"
-                            : "Finish"}
-                    </Button>
+                    <NextButtonWrapper>
+                        <Button
+                            onClick={handleButtonClick}
+                            disabled={buttonState === "check" && answerSelected === null}
+                        >
+                            {buttonState === "check"
+                                ? "Check"
+                                : buttonState === "next"
+                                ? "Next"
+                                : "Finish"}
+                        </Button>
+                    </NextButtonWrapper>
                 </MultipleChoice_Quiz>
                 <NavigationFooter>
                     <Button onClick={handleCancelQuiz}>Cancel Quiz</Button>

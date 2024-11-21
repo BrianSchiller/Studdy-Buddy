@@ -11,6 +11,7 @@ interface StyledMultipleChoiceProps {
 
 interface MultipleChoiceProps {
     question: string;
+    image: string;
     options: string[];
     onAnswerSelect: (answer: string) => void;
     selectedAnswer: string | null;
@@ -89,8 +90,29 @@ const StyledOptionButton = styled.button<{
     }
 `;
 
+const TitleWithImage = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 12px;
+`;
+
+const TitleText = styled.h3`
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c2c2c;
+`;
+
+const IconImage = styled.img`
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border-radius: 8px;
+`;
+
 export const MultipleChoice = ({
     question,
+    image,
     options,
     onAnswerSelect,
     selectedAnswer,
@@ -105,7 +127,9 @@ export const MultipleChoice = ({
     return (
         <StyledMultipleChoice>
             <h3>{question}</h3>
-            <OptionsGrid>
+                <TitleWithImage>
+                    <IconImage src={image} alt="Quiz Icon" />
+                </TitleWithImage>            <OptionsGrid>
                 {options.map((option, index) => (
                     <StyledOptionWrapper
                         key={index}
