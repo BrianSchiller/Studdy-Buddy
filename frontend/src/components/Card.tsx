@@ -6,6 +6,7 @@ interface StyledCardProps {
     $shadow?: boolean;
     $color?: string;
     $width?: string;
+    $minheigth?: string;
 }
 
 interface CardProps {
@@ -13,6 +14,7 @@ interface CardProps {
     shadow?: boolean;
     color?: string;
     width?: string;
+    minheigth?: string;
 }
 
 const StyledCard = styled.div<StyledCardProps>`
@@ -22,14 +24,15 @@ const StyledCard = styled.div<StyledCardProps>`
     color: ${({ $color }) => $color && 'rgba(255, 255, 255)'};
     border-radius: ${({ $radius }) => $radius ? '10px' : '0px'};
     box-shadow: ${({ $shadow }) => $shadow ? '0 0 10px rgba(0, 0, 0, 0.1)' : 'none'};
-    min-height: 100px;
+    min-height: ${({ $minheigth }) => $minheigth || '100px'};
+:
 `
 
 export const Card = (
-    { radius, shadow, color, width, children }: React.PropsWithChildren<CardProps>
+    { radius, shadow, color, width, children, minheigth }: React.PropsWithChildren<CardProps>
 ) => {
     return (
-        <StyledCard $radius={radius} $shadow={shadow} $color={color} $width={width}>
+        <StyledCard $radius={radius} $shadow={shadow} $color={color} $width={width} $minheigth={minheigth}>
             {children}
         </StyledCard>
     )
