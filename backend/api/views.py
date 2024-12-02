@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import generics, status
 from .models import User, UserProgress, Word, Topic, ExperimentGroup, Mistake
-from .serializers import WordSerializer
+from .serializers import WordSerializer, TopicSerializer
 from django.http import JsonResponse
 from collections import Counter
 from random import shuffle
@@ -60,6 +60,13 @@ class WordListView(generics.ListAPIView):
     def get_queryset(self):
         topic_id = self.kwargs['topic_id']
         return Word.objects.filter(topic_id=topic_id)
+    
+
+class TopicListView(generics.ListAPIView):
+    serializer_class = TopicSerializer
+
+    def get_queryset(self):
+        return Topic.objects.all()
 
 
 class UserProgressListView(APIView):
