@@ -108,6 +108,9 @@
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
     "jsx": "react-jsx",
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*",
+    "src",
+    "src/types/declaration.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

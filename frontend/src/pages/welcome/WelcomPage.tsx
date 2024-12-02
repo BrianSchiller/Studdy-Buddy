@@ -69,7 +69,7 @@ const WelcomePage: React.FC = () => {
                         {[...Array(3)].map((_, index) => (
                             <Card key={index} radius width="40%">
                                 <StyledFlex $direction="column">
-                                    <Text size="20px" weight="bold">Verduras y Frutas</Text>
+                                    <Text size="20px" weight="bold">Vacaciones</Text>
                                     <img src="https://placehold.co/100" alt="placeholder" />
                                     <Button>Start</Button>
                                 </StyledFlex>
