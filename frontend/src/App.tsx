@@ -1,13 +1,11 @@
-// App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/login/LoginPage';
-import WelcomePage from './pages/welcome/WelcomPage';
-import ListPage from './pages/verdurasyfrutas/ListPage'
-import './App.css'; 
-import QuizPage from './pages/verdurasyfrutas/QuizPage';
-import QuizComplete from "./pages/quizcomplete/QuizCompletePage";
-// Import other pages as needed
+import WelcomePage from './pages/welcome/WelcomePage';
+import ListPage from './pages/vocab_list/ListPage';
+import QuizPage from './pages/multiplechoice_quiz/QuizPage';
+import QuizComplete from './pages/quizcomplete/QuizCompletePage';
+import './App.css';
 
 const App: React.FC = () => {
   return (
@@ -15,10 +13,9 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/welcome" element={<WelcomePage />} />
-        <Route path="/verdurasyfrutas" element={<ListPage />} />
-        <Route path="/verdurasyfrutas/quiz" element={<QuizPage />} />
+        <Route path="/list" element={<ListPage />} />
+        <Route path="/quiz" element={<QuizPage />} />
         <Route path="/quiz-complete" element={<QuizComplete />} />
-        {/* Add more routes here as you create more pages */}
       </Routes>
     </Router>
   );
