@@ -8,13 +8,15 @@ const QuizComplete: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { score, total } = location.state || { score: 0, total: 0 };
+    const username = location.state?.username || "Guest"; // Added fallback username for clarity
+    const topicId = location.state.topicId; 
 
     const handleRestartQuiz = () => {
-        navigate("/verdurasyfrutas/quiz");
+        navigate("/quiz",{ state: { username, topicId} });
     };
 
     const handleGoHome = () => {
-        navigate("/welcome");
+        navigate("/welcome", { state: { username} });
     };
 
     return (

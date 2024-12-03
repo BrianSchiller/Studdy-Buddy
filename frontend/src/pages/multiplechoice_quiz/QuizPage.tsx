@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Text } from "../../components/Text";
 import { Menu } from "../../components/Menu";
 import { Button } from "../../components/Button";
 import { MultipleChoice } from "../../components/MultipleChoice";
 import { NavigationHeader } from "../../components/NavigationHeader";
-import { fetchVocabWords } from "../../api";
+import { fetchVocabWords, updateUserProgress } from "../../api";
 import { generateQuizQuestions, QuizQuestion } from "./quizUtils";
 import {
     MultipleChoice_Quiz,
@@ -27,13 +27,19 @@ const QuizPage: React.FC = () => {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [buttonState, setButtonState] = useState<"check" | "next" | "finish">("check");
     const [score, setScore] = useState<number>(0); // Track the score
+    const location = useLocation();
+    const username = location.state?.username || "Guest"; // Added fallback username for clarity
+
+
+    //This must be replaced with dynamic stuff
+    const topicId = location.state.topicId; 
 
     // Fetch questions
     useEffect(() => {
         const loadQuestions = async () => {
             try {
-                const vocabWords = await fetchVocabWords();
-                const quizQuestions = generateQuizQuestions(vocabWords, 4);
+                const vocabWords = await fetchVocabWords(topicId);
+                const quizQuestions = await generateQuizQuestions(vocabWords, 4); // Adjusted for async function
                 setQuestions(quizQuestions);
                 setLoading(false);
             } catch (error) {
@@ -50,7 +56,7 @@ const QuizPage: React.FC = () => {
     };
 
     // Handle "Check" or "Next" button actions
-    const handleButtonClick = () => {
+    const handleButtonClick = async () => {
         if (buttonState === "check" && answerSelected !== null) {
             const isAnswerCorrect = questions[currentIndex].correctAnswer === answerSelected;
             setIsCorrect(isAnswerCorrect);
@@ -66,13 +72,22 @@ const QuizPage: React.FC = () => {
             setIsCorrect(null);
             setButtonState("check");
         } else if (buttonState === "finish") {
-            // Show loading indicator before navigating
-            setLoadingResults(true);
+            setLoadingResults(true); // Show loading indicator
 
-            // Simulate loading and then navigate
-            setTimeout(() => {
-                navigate("/quiz-complete", { state: { score, total: questions.length } });
-            }, 2000); // Adjust the timeout duration as needed
+            const totalQuestions = questions.length;
+            const mistakes = totalQuestions - score;
+
+            try {
+                // Send progress update to backend
+                await updateUserProgress(username, topicId, mistakes); //Irgendwie klappt es noch nicht für andere Topic-ids, Probleme im Backend 
+
+                // Navigate to quiz-complete page
+                navigate("/quiz-complete", { state: { username, topicId, score, total: totalQuestions } });
+            } catch (error) {
+                console.error("Error submitting quiz results:", error);
+            } finally {
+                setLoadingResults(false); // Hide loading indicator
+            }
         }
     };
 
@@ -111,13 +126,13 @@ const QuizPage: React.FC = () => {
                     imageSrc="https://placehold.co/95" // Replace with your image path or URL
                     currentIndex={currentIndex}
                     totalQuestions={questions.length}
-                    progress={((currentIndex) / questions.length) * 100}
+                    progress={(currentIndex / questions.length) * 100}
                 />
                 <MultipleChoice_Quiz>
                     {questions.length > 0 && (
                         <MultipleChoice
                             question={questions[currentIndex].question}
-                            image="https://placehold.co/95" // Pass the image to the component
+                            image={questions[currentIndex].image || "https://placehold.co/95"} // Use provided image or fallback
                             options={questions[currentIndex].options}
                             onAnswerSelect={handleAnswerSelect}
                             selectedAnswer={answerSelected}
