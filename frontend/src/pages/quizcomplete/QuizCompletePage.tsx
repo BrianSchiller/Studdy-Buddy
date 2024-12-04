@@ -9,14 +9,9 @@ const QuizComplete: React.FC = () => {
     const location = useLocation();
     const { score, total } = location.state || { score: 0, total: 0 };
     const username = location.state?.username || "Guest"; // Added fallback username for clarity
-    const topicId = location.state.topicId; 
-
-    const handleRestartQuiz = () => {
-        navigate("/quiz",{ state: { username, topicId} });
-    };
 
     const handleGoHome = () => {
-        navigate("/welcome", { state: { username} });
+        navigate("/welcome", { state: { username } });
     };
 
     return (
@@ -50,7 +45,6 @@ const QuizComplete: React.FC = () => {
                         </tr>
                     </tbody>
                 </StyledTable>
-                <Button onClick={handleRestartQuiz}>Restart Quiz</Button>
                 <Button onClick={handleGoHome}>Go Home</Button>
             </ResultsPanel>
         </StyledContainer>
