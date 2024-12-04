@@ -2,9 +2,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import generics, status
-from .models import User, UserProgress, Word, Topic, ExperimentGroup, Mistake
+from .models import User, UserProgress, Word, Topic, ExperimentGroup, Mistake, Exam, ExamAnswer, ExamResult
 from .serializers import WordSerializer, TopicSerializer
 from django.http import JsonResponse
+from django.db import transaction
 from collections import Counter
 from random import shuffle
 
@@ -71,8 +72,8 @@ class TopicListView(generics.ListAPIView):
 
 class UserProgressListView(APIView):
     def get(self, request, username, *args, **kwargs):
+        # Get the user by username
         try:
-            # Get the user by username
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
@@ -99,36 +100,47 @@ class UserProgressListView(APIView):
 
 def assign_topics_and_styles_balanced(user):
     styles = ['B', 'I', 'S']
-    topics = list(Topic.objects.all())[:3]
-    style_counts = {topic.id: Counter({'B': 0, 'I': 0, 'S': 0}) for topic in topics}
+    topics = Topic.objects.all()[:3]  # Select the first three topics
 
-    # Count current style assignments for each topic
-    for group in ExperimentGroup.objects.all():
-        print(group.topic.id)
-        print(group.presentation_style)
+    # Initialize style counters for each topic
+    style_counts = {
+        topic.id: Counter({'B': 0, 'I': 0, 'S': 0})
+        for topic in topics
+    }
+
+    # Count current style assignments for each topic globally
+    experiment_groups = ExperimentGroup.objects.all()
+    for group in experiment_groups:
         style_counts[group.topic.id][group.presentation_style] += 1
-    
-    print(style_counts)
 
-    # Track which styles have already been assigned to the user
-    assigned_styles = set()
+    assigned_styles = set()  # Track styles already assigned to the user
 
-    for topic in topics:
-        # Find the least assigned style for this topic that hasn't been assigned to this user yet
-        available_styles = [style for style in styles if style not in assigned_styles]
-        
-        # Get the least used style from the available ones
-        least_assigned_style = min(available_styles, key=lambda s: style_counts[topic.id][s])
+    with transaction.atomic():  # Ensure atomicity of database changes
+        for topic in topics:
+            # Update style counts dynamically to reflect current assignments
+            available_styles = [style for style in styles if style not in assigned_styles]
 
-        # Assign the topic and least used style to the user
-        ExperimentGroup.objects.create(user=user, topic=topic, presentation_style=least_assigned_style)
-        UserProgress.objects.get_or_create(user=user, topic=topic, defaults={'level': 1})
+            # Select the least used style globally from the available ones
+            least_assigned_style = min(
+                available_styles,
+                key=lambda style: style_counts[topic.id][style]
+            )
 
-        # Update the style count for the topic
-        style_counts[topic.id][least_assigned_style] += 1
+            # Assign the selected style and topic to the user
+            ExperimentGroup.objects.create(
+                user=user,
+                topic=topic,
+                presentation_style=least_assigned_style
+            )
 
-        # Mark this style as assigned to the user
-        assigned_styles.add(least_assigned_style)
+            # Create user progress for the topic if not already created
+            UserProgress.objects.get_or_create(
+                user=user,
+                topic=topic,
+                defaults={'level': 1}
+            )
+
+            assigned_styles.add(least_assigned_style)
 
 
 @api_view(['GET'])
@@ -154,3 +166,73 @@ def get_random_words(request, amount):
 
     # Return the random words as JSON response
     return Response(response_data, status=status.HTTP_200_OK)
+
+
+def get_exam(request, topic_id):
+    # Get the current user and the topic
+    try:
+        topic = Topic.objects.get(id=topic_id)
+    except Topic.DoesNotExist:
+        return Response({'error': 'Topic not found'}, status=404)
+
+    # Retrieve the exam associated with the topic
+    exam = Exam.objects.filter(topic=topic).first()
+    if not exam:
+        return JsonResponse({"error": "No exam available for this topic."}, status=404)
+
+    # Get the questions and possible answers for the exam
+    questions = ExamAnswer.objects.filter(exam=exam).all()
+
+    print(questions)
+
+    # Prepare the data to be sent to the template (or API response)
+    exam_data = {
+        "id": exam.id,
+        "exam_text": exam.text,
+        "questions": [
+            {
+                "question": question.question,
+                "answer": question.answer_text
+            }
+            for question in questions
+        ]
+    }
+
+    # Return the exam data (this could be passed to a template for rendering)
+    return JsonResponse(exam_data)
+
+@api_view(['POST'])
+def submit_exam(request, username, exam_id):
+    # Get the current user and the exam
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+    
+    try:
+        exam = Exam.objects.get(id=exam_id)
+    except Exam.DoesNotExist:
+        return Response({'error': 'Exam not found'}, status=404)
+
+    if request.method == "POST":
+        score = request.data.get('score')
+
+        if not isinstance(score, int) or score < 0:
+            return JsonResponse({'error': 'Score must be a non-negative integer.'}, status=400)
+
+        # Save the result
+        exam_result = ExamResult.objects.create(
+            user=user,
+            exam=exam,
+            score=score
+        )
+
+        return JsonResponse({
+            'message': 'Exam result submitted successfully.',
+            'exam_id': exam_result.exam.id,
+            'user_id': exam_result.user.id,
+            'score': exam_result.score,
+            'date_taken': exam_result.date_taken
+        })
+
+    return JsonResponse({'error': 'Invalid request method. Only POST is allowed.'}, status=405)

@@ -60,3 +60,27 @@ class ExperimentGroup(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.topic.name}: {self.presentation_style}"
 
+
+class Exam(models.Model):
+    topic = models.ForeignKey(Topic, related_name='exams', on_delete=models.CASCADE)
+    text = models.TextField()
+
+    def __str__(self):
+        return f"Exam for {self.topic.name}"
+
+class ExamAnswer(models.Model):
+    exam = models.ForeignKey(Exam, related_name='answers', on_delete=models.CASCADE)
+    question = models.TextField()
+    answer_text = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"Answer for: {self.question}"
+
+class ExamResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    exam = models.ForeignKey(Exam, related_name='results', on_delete=models.CASCADE)
+    score = models.IntegerField(null=True, blank=True)  
+    date_taken = models.DateTimeField(auto_now_add=True) 
+
+    def __str__(self):
+        return f"Result for {self.user.username} - {self.exam.topic.name} - Score: {self.score}"
