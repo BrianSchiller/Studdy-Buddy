@@ -4,11 +4,12 @@ import { Text } from "../../components/Text";
 import { Button } from "../../components/Button";
 import { StyledContainer, ResultsPanel, StyledTable } from "./stylesQuizComplete";
 
-const QuizComplete: React.FC = () => {
+const WordPairQuizComplete: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { score, total } = location.state || { score: 0, total: 0 };
-    const username = location.state?.username || "Guest"; // Added fallback username for clarity
+
+    const { mistakes, timer } = location.state || { mistakes: 0, timer: 0 };
+    const username = location.state?.username || "Guest"; // Fallback username
 
     const handleGoHome = () => {
         navigate("/welcome", { state: { username } });
@@ -17,12 +18,7 @@ const QuizComplete: React.FC = () => {
     return (
         <StyledContainer>
             <ResultsPanel>
-                <Text size="28px" weight="bold">
-                    Quiz Complete!
-                </Text>
-                <Text size="24px">
-                    Your Score: {score} / {total} ({((score / total) * 100).toFixed(2)}%)
-                </Text>
+                <Text size="28px" weight="bold">Quiz Complete!</Text>
                 <StyledTable>
                     <thead>
                         <tr>
@@ -32,16 +28,12 @@ const QuizComplete: React.FC = () => {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Correct Answers</td>
-                            <td>{score}</td>
+                            <td>Total Mistakes</td>
+                            <td>{mistakes}</td>
                         </tr>
                         <tr>
-                            <td>Total Questions</td>
-                            <td>{total}</td>
-                        </tr>
-                        <tr>
-                            <td>Accuracy</td>
-                            <td>{((score / total) * 100).toFixed(2)}%</td>
+                            <td>Total Time</td>
+                            <td>{timer} seconds</td>
                         </tr>
                     </tbody>
                 </StyledTable>
@@ -51,4 +43,4 @@ const QuizComplete: React.FC = () => {
     );
 };
 
-export default QuizComplete;
+export default WordPairQuizComplete;

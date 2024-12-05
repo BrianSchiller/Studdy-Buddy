@@ -18,7 +18,7 @@ const WelcomePage: React.FC = () => {
             <DashboardPanel>
                 <DashboardLeft>
                     <Text size="24px" weight="bold">
-                        Welcome to Study Buddy, {username}!
+                        Welcome to Studdy Buddy, {username}!
                     </Text>
                     <Text size="18px">
                         Select a topic to practice:
