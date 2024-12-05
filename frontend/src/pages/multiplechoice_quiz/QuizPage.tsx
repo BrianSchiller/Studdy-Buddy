@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 import { Text } from "../../components/Text";
 import { Menu } from "../../components/Menu";
 import { Button } from "../../components/Button";
@@ -15,6 +15,12 @@ import {
     NextButtonWrapper,
 } from "./stylesQuizPage";
 
+// Utility to shuffle and limit questions to 10
+const shuffleAndLimit = <T,>(array: T[], limit: number): T[] => {
+    const shuffled = [...array].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, limit);
+};
+
 const QuizPage: React.FC = () => {
     const navigate = useNavigate();
 
@@ -29,17 +35,18 @@ const QuizPage: React.FC = () => {
     const [score, setScore] = useState<number>(0); // Track the score
     const location = useLocation();
     const username = location.state?.username || "Guest"; // Added fallback username for clarity
-
-
-    //This must be replaced with dynamic stuff
-    const topicId = location.state.topicId; 
+    const topicId = location.state.topicId;
 
     // Fetch questions
     useEffect(() => {
         const loadQuestions = async () => {
             try {
                 const vocabWords = await fetchVocabWords(topicId);
-                const quizQuestions = await generateQuizQuestions(vocabWords, 4); // Adjusted for async function
+
+                // Select up to 10 questions and generate quiz questions
+                const limitedWords = shuffleAndLimit(vocabWords, 10);
+                const quizQuestions = await generateQuizQuestions(limitedWords, 4); // Adjusted for async function
+
                 setQuestions(quizQuestions);
                 setLoading(false);
             } catch (error) {
@@ -48,7 +55,7 @@ const QuizPage: React.FC = () => {
             }
         };
         loadQuestions();
-    }, []);
+    }, [topicId]);
 
     // Handle answer selection
     const handleAnswerSelect = (answer: string) => {
@@ -79,7 +86,7 @@ const QuizPage: React.FC = () => {
 
             try {
                 // Send progress update to backend
-                await updateUserProgress(username, topicId, mistakes); //Irgendwie klappt es noch nicht für andere Topic-ids, Probleme im Backend 
+                await updateUserProgress(username, topicId, mistakes);
 
                 // Navigate to quiz-complete page
                 navigate("/quiz-complete", { state: { username, topicId, score, total: totalQuestions } });

@@ -5,7 +5,6 @@ import { Menu } from "../../components/Menu";
 import { Button } from "../../components/Button";
 import { NavigationHeader } from "../../components/NavigationHeader";
 import { fetchVocabWords, fetchRandomWords, updateUserProgress } from "../../api";
-import { VocabWord } from "../../interfaces";
 import {
     DashboardPanel,
     StyledContainer,
@@ -21,14 +20,10 @@ interface FillSentenceQuestion {
     options: string[]; // Randomized options
 }
 
-// Utility function to shuffle an array
-const shuffleArray = <T,>(array: T[]): T[] => {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
+// Utility function to shuffle and limit array size
+const shuffleAndLimit = <T,>(array: T[], limit: number): T[] => {
+    const shuffled = [...array].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, limit);
 };
 
 const FillSentenceQuizPage: React.FC = () => {
@@ -52,9 +47,10 @@ const FillSentenceQuizPage: React.FC = () => {
         const loadQuestions = async () => {
             try {
                 const vocabWords = await fetchVocabWords(topicId);
+                const limitedWords = shuffleAndLimit(vocabWords, 10); // Limit to 10 questions
                 const fillSentenceQuestions: FillSentenceQuestion[] = [];
 
-                for (const word of vocabWords) {
+                for (const word of limitedWords) {
                     const randomWords = await fetchRandomWords(6);
                     const filteredRandomWords = randomWords.filter((rw) => rw.spanish !== word.spanish);
 
@@ -69,8 +65,7 @@ const FillSentenceQuizPage: React.FC = () => {
                     });
                 }
 
-                // Shuffle the questions to randomize their order
-                setQuestions(shuffleArray(fillSentenceQuestions));
+                setQuestions(fillSentenceQuestions);
             } catch (error) {
                 console.error("Error fetching questions:", error);
             } finally {

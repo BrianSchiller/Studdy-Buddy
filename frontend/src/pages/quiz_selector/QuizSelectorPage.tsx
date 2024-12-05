@@ -20,6 +20,10 @@ const QuizSelectorPage: React.FC = () => {
         navigate('/fill-sentence-quiz', { state: { username, topicId, title } });
     };
 
+    const handleStartMemoryQuiz = () => {
+        navigate('/wordpair-quiz', { state: { username, topicId, title } });
+    };
+
     return (
         <StyledContainer>
             <Text size="28px" weight="bold">
@@ -34,6 +38,10 @@ const QuizSelectorPage: React.FC = () => {
                 <QuizButton onClick={handleStartFillSentence}>
                     <Text size="20px" weight="bold">Fill the Sentence</Text>
                     <Text>Complete the sentence with the correct word.</Text>
+                </QuizButton>
+                <QuizButton onClick={handleStartMemoryQuiz}>
+                    <Text size="20px" weight="bold">Wordpair Quiz</Text>
+                    <Text>Match English words and images to Spanish words</Text>
                 </QuizButton>
             </QuizOptionContainer>
         </StyledContainer>
