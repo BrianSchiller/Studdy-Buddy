@@ -6,7 +6,7 @@ import ListPage from './pages/vocab_list/ListPage';
 import QuizSelectorPage from './pages/quiz_selector/QuizSelectorPage';
 import QuizPage from './pages/multiplechoice_quiz/QuizPage';
 import FillSentenceQuizPage from './pages/fillsentence_quiz/FillSentenceQuizPage';
-import MemoryQuizPage from './pages/wordpair_quiz/WordPairQuizPage';
+import WordPairQuizPage from './pages/wordpair_quiz/WordPairQuizPage';
 import QuizComplete from './pages/quizcomplete/QuizCompletePage';
 import WordPairQuizComplete from './pages/quizcomplete/WordPairQuizComplete';
 import './App.css';
@@ -18,10 +18,9 @@ const App: React.FC = () => {
                 <Route path="/" element={<LoginPage />} />
                 <Route path="/welcome" element={<WelcomePage />} />
                 <Route path="/list" element={<ListPage />} />
-                <Route path="/quiz-selector" element={<QuizSelectorPage />} />
                 <Route path="/quiz" element={<QuizPage />} />
                 <Route path="/fill-sentence-quiz" element={<FillSentenceQuizPage />} />
-                <Route path="/wordpair-quiz" element={<MemoryQuizPage />} />
+                <Route path="/wordpair-quiz" element={<WordPairQuizPage />} />
                 <Route path="/quiz-complete" element={<QuizComplete />} />
                 <Route path="/wordpair-quiz-complete" element={<WordPairQuizComplete />} />
             </Routes>

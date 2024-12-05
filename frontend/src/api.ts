@@ -36,3 +36,15 @@ export const updateUserProgress = async (username: string, topicId: number, mist
         console.error("Error updating user progress:", error);
     }
 };
+
+
+// Fetch the topic list with styles
+export const fetchTopics = async (username: string): Promise<any[]> => {
+    try {
+        const response = await axios.get<any[]>(`${BASE_API_URL}/topics/${username}/`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching topics:", error);
+        return [];
+    }
+};
