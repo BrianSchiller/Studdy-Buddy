@@ -4,9 +4,10 @@ import React from "react";
 interface NavigationHeaderProps {
     title: string;
     imageSrc: string;
-    currentIndex: number;
-    totalQuestions: number;
+    currentIndex?: number;
+    totalQuestions?: number;
     progress: number; // Progress percentage
+    timer?: number; // Timer in seconds
 }
 
 // Updated Container to span the width of the parent container
@@ -69,12 +70,25 @@ const ProgressFill = styled.div<{ progress: number }>`
     width: ${({ progress }) => `${progress}%`};
 `;
 
+// Add styled component for the timer display
+const TimerText = styled.div`
+    font-size: 16px;
+    font-weight: bold;
+    color: #5a5a5a;
+    text-align: right;
+    margin-top: 8px;
+`;
+
+
+
+
 export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
     title,
     imageSrc,
     currentIndex,
     totalQuestions,
     progress,
+    timer,
 }) => {
     return (
         <NavigationHeaderContainer>
@@ -84,12 +98,21 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
                     <TitleText>{title}</TitleText>
                 </TitleWithImage>
                 <ProgressText>
-                    {currentIndex} / {totalQuestions}
+                    {currentIndex !== undefined && totalQuestions !== undefined
+                        ? `${currentIndex + 1} / ${totalQuestions}`
+                        : ""}
                 </ProgressText>
             </HeaderRow>
             <ProgressBarContainer>
                 <ProgressFill progress={progress} />
             </ProgressBarContainer>
+            {timer !== undefined && (
+                <TimerText>
+                    <strong>Time:</strong> {timer} seconds
+                </TimerText>
+            )}
         </NavigationHeaderContainer>
     );
 };
+
+
