@@ -63,11 +63,32 @@ class WordListView(generics.ListAPIView):
         return Word.objects.filter(topic_id=topic_id)
     
 
-class TopicListView(generics.ListAPIView):
-    serializer_class = TopicSerializer
+class TopicListView(APIView):
+    def get(self, request, username, *args, **kwargs):
+        # Get the user
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
 
-    def get_queryset(self):
-        return Topic.objects.all()
+        # Get all topics
+        topics = Topic.objects.all()
+
+        # Create a mapping of topic_id to the assigned style for the user
+        user_styles = ExperimentGroup.objects.filter(user=user).values_list('topic_id', 'presentation_style')
+        style_map = {topic_id: style for topic_id, style in user_styles}
+
+        # Build the response data, including the style
+        topics_data = [
+            {
+                'topic_id': topic.id,
+                'topic_name': topic.name,
+                'style': style_map.get(topic.id, None)  # Get the style if assigned, else None
+            }
+            for topic in topics
+        ]
+
+        return Response(topics_data, status=status.HTTP_200_OK)
 
 
 class UserProgressListView(APIView):
