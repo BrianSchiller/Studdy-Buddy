@@ -49,27 +49,36 @@ export const fetchTopics = async (username: string): Promise<any[]> => {
     }
 };
 
-// Fetch exam data
 export const fetchExam = async (topicId: number): Promise<any> => {
     try {
         const response = await axios.get(`${BASE_API_URL}/exam/${topicId}/`);
         return response.data;
     } catch (error) {
-        console.error("Error fetching exam data:", error);
-        return null;
+        console.error("Error fetching exam:", error);
+        throw error;
     }
 };
 
-// Submit exam results
-export const submitExam = async (examId: number, username: string, score: number): Promise<void> => {
+export const submitExam = async (
+    examId: number,
+    username: string,
+    score: number,
+    answers: { [key: number]: string }
+): Promise<void> => {
     try {
         await axios.post(`${BASE_API_URL}/submit_exam/${examId}/${username}/`, {
             score,
+            answers,
         });
+        console.log("Exam submitted successfully.");
     } catch (error) {
         console.error("Error submitting exam results:", error);
+        throw new Error("Failed to submit exam. Please try again.");
     }
 };
+
+
+
 
 // API to check exam eligibility
 export const checkExamEligibility = async (username: string): Promise<boolean> => {
@@ -81,5 +90,17 @@ export const checkExamEligibility = async (username: string): Promise<boolean> =
     } catch (error) {
         console.error("Error checking exam eligibility:", error);
         return false; // Default to false if there's an error
+    }
+};
+
+// api.ts
+// Fetch user progress
+export const getUserProgress = async (username: string) => {
+    try {
+        const response = await axios.get(`${BASE_API_URL}/user-progress/${username}/`);
+        return response.data; // Assuming response is an array of { topic_id, topic, level }
+    } catch (error) {
+        console.error("Error fetching user progress:", error);
+        return [];
     }
 };

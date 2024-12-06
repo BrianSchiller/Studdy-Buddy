@@ -37,10 +37,29 @@ export const DashboardPanel = styled.div`
 export const DashboardRight = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 16px;
     width: 40%;
+    padding: 20px;
+    background-color: rgba(245, 245, 245, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-`
+    max-height: 80vh;
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+        background-color: white;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+`;
+
 
 export const DashboardLeft = styled.div`
     display: flex;
@@ -53,17 +72,18 @@ export const DashboardLeft = styled.div`
 export const CardBox = styled.div`
     display: flex;
     flex-direction: row;
-    gap: 12px;
+    gap: 16px;
     flex-wrap: wrap;
     overflow-y: auto;
-`
+`;
 
 export const StyledButton = styled.button<{ $isEnabled?: boolean }>`
-    padding: 12px 20px;
-    font-size: 16px;
+    padding: 10px 15px;
+    margin-top: 10px;
+    font-size: 14px;
     font-weight: bold;
     color: white;
-    background-color: ${({ $isEnabled }) => ($isEnabled ? "#692dbd" : "#ddd")};
+    background-color: ${({ $isEnabled }) => ($isEnabled ? "#4caf50" : "#ddd")};
     border: none;
     border-radius: 8px;
     cursor: ${({ $isEnabled }) => ($isEnabled ? "pointer" : "not-allowed")};
@@ -71,7 +91,6 @@ export const StyledButton = styled.button<{ $isEnabled?: boolean }>`
     transition: background-color 0.3s ease-in-out;
 
     &:hover {
-        background-color: ${({ $isEnabled }) =>
-            $isEnabled ? "#5a24a1" : "#ddd"};
+        background-color: ${({ $isEnabled }) => ($isEnabled ? "#45a049" : "#ddd")};
     }
 `;

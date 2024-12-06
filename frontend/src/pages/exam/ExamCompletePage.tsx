@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Text } from "../../components/Text";
 import { Button } from "../../components/Button";
@@ -9,26 +9,48 @@ import {
     ButtonWrapper,
 } from "./stylesExamComplete";
 
+interface QuestionResult {
+    question: string;
+    correctAnswer: string;
+    userAnswer: string;
+}
+
 const ExamCompletePage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { username, score, totalQuestions } = location.state || {
-        username: "Guest",
-        score: 0,
-        totalQuestions: 0,
-    };
+
+    // Destructure state and provide defaults if missing
+    const {
+        username = "Guest",
+        score = 0,
+        totalQuestions = 0,
+        questions = [],
+        answers = {},
+        correctAnswers = [],
+    } = location.state || {};
+
+    // Log state for debugging
+    useEffect(() => {
+        console.log("ExamCompletePage location.state:", location.state);
+        if (!location.state) {
+            console.warn("No state passed. Redirecting to the welcome page.");
+            navigate("/welcome"); // Redirect if no state is provided
+        }
+    }, [location.state, navigate]);
 
     const handleGoHome = () => {
         navigate("/welcome", { state: { username } });
     };
 
+    if (!location.state) {
+        return null; // Avoid rendering if no data is available
+    }
+
     return (
         <StyledContainer>
             <ResultsPanel>
-                <Text size="28px" weight="bold">
-                    Exam Complete!
-                </Text>
+                <Text size="28px" weight="bold">Exam Complete!</Text>
                 <Text size="24px">
                     Your Score: {score} / {totalQuestions} (
                     {((score / totalQuestions) * 100).toFixed(2)}%)
@@ -36,23 +58,38 @@ const ExamCompletePage: React.FC = () => {
                 <StyledTable>
                     <thead>
                         <tr>
-                            <th>Statistic</th>
-                            <th>Value</th>
+                            <th>Question</th>
+                            <th>Your Answer</th>
+                            <th>Correct Answer</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Correct Answers</td>
-                            <td>{score}</td>
-                        </tr>
-                        <tr>
-                            <td>Total Questions</td>
-                            <td>{totalQuestions}</td>
-                        </tr>
-                        <tr>
-                            <td>Accuracy</td>
-                            <td>{((score / totalQuestions) * 100).toFixed(2)}%</td>
-                        </tr>
+                        {questions.map((q: QuestionResult, index: number) => {
+                            const isCorrect = q.userAnswer === q.correctAnswer;
+                            return (
+                                <tr key={index}>
+                                    <td>{q.question}</td>
+                                    <td
+                                        style={{
+                                            color: isCorrect ? "green" : "red",
+                                            fontWeight: isCorrect ? "bold" : "normal",
+                                        }}
+                                    >
+                                        {q.userAnswer}
+                                    </td>
+                                    <td
+                                        style={{
+                                            color: "blue",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        {q.correctAnswer}
+                                    </td>
+                                    <td>{isCorrect ? "Correct" : "Incorrect"}</td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </StyledTable>
                 <ButtonWrapper>

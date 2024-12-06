@@ -1,98 +1,75 @@
-import React from "react";
+// TopicSelector.tsx
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
 import { CardBox } from "./styles";
+import { getUserProgress } from "../../api"; // Fetch user progress
 
 interface TopicSelectorProps {
-    username: string; // Passed from the parent component
+    username: string;
+}
+
+interface TopicProgress {
+    topic_id: number;
+    topic: string;
+    level: number;
 }
 
 const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
     const navigate = useNavigate();
+    const [progress, setProgress] = useState<TopicProgress[]>([]);
+
+    // Fetch user progress on mount
+    useEffect(() => {
+        const fetchProgress = async () => {
+            try {
+                const userProgress = await getUserProgress(username);
+                setProgress(userProgress);
+            } catch (error) {
+                console.error("Error fetching user progress:", error);
+            }
+        };
+        fetchProgress();
+    }, [username]);
 
     // Navigate to ListPage with topic-specific data
     const handleTopicSelection = (topicId: number, title: string, description: string) => {
         navigate("/list", {
-            state: { 
-                username, 
-                topicId, 
-                title, 
-                description 
-            },
+            state: { username, topicId, title, description },
         });
+    };
+
+    // Navigate to Exam Page
+    const handleTakeExam = (topicId: number) => {
+        navigate(`/exam/${topicId}`, { state: { username } });
     };
 
     return (
         <CardBox>
-            {/* Topic: Verduras y Frutas */}
-            <Card radius width="40%">
-                <h3>Verduras y Frutas</h3>
-                <img src="https://placehold.co/100" alt="Fruits and Vegetables" />
-                <Button 
-                    onClick={() => 
-                        handleTopicSelection(
-                            1, 
-                            "Learn Fruits and Vegetables", 
-                            "Get to know different fruits and vegetables with this list."
-                        )
-                    }
-                >
-                    Start
-                </Button>
-            </Card>
-
-
-            {/* Topic: Vacaciones */}
-            <Card radius width="40%">
-                <h3>Vacaciones</h3>
-                <img src="https://placehold.co/100" alt="Vacation Words" />
-                <Button 
-                    onClick={() => 
-                        handleTopicSelection(
-                            2, 
-                            "Learn Vacation Words", 
-                            "Prepare for your next vacation with these useful words."
-                        )
-                    }
-                >
-                    Start
-                </Button>
-            </Card>
-
-            {/* Topic: Profesiones  */}
-            <Card radius width="40%">
-                <h3>Profesiones</h3>
-                <img src="https://placehold.co/100" alt="Profesiones Words" />
-                <Button 
-                    onClick={() => 
-                        handleTopicSelection(
-                            3, 
-                            "Learn Profession Words", 
-                            "Prepare for your next profession with these useful words."
-                        )
-                    }
-                >
-                    Start
-                </Button>
-            </Card>
-
-            {/* Topic: Animales */}
-            <Card radius width="40%">
-                <h3>Animales</h3>
-                <img src="https://placehold.co/100" alt="Animals" />
-                <Button 
-                    onClick={() => 
-                        handleTopicSelection(
-                            4, 
-                            "Learn Animals", 
-                            "Learn the names of various animals in Spanish and English."
-                        )
-                    }
-                >
-                    Start
-                </Button>
-            </Card>
+            {progress.map((topic) => (
+                <Card radius width="40%" key={topic.topic_id}>
+                    <h3>{topic.topic}</h3>
+                    <img src="https://placehold.co/100" alt={topic.topic} />
+                    <Button
+                        onClick={() =>
+                            handleTopicSelection(
+                                topic.topic_id,
+                                `Learn ${topic.topic}`,
+                                `Get to know about ${topic.topic} with this list.`
+                            )
+                        }
+                    >
+                        Start
+                    </Button>
+                    <Button
+                        onClick={() => handleTakeExam(topic.topic_id)}
+                        disabled={topic.level < 5}
+                    >
+                        {topic.level < 5 ? "Exam Locked" : "Take Exam"}
+                    </Button>
+                </Card>
+            ))}
         </CardBox>
     );
 };

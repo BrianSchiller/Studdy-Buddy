@@ -1,4 +1,3 @@
-// stylesExamComplete.ts
 import styled from "styled-components";
 
 export const StyledContainer = styled.div`
@@ -8,7 +7,8 @@ export const StyledContainer = styled.div`
     height: 90vh;
     justify-content: center;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: #f4f4f9;
+    padding: 20px;
 `;
 
 export const ResultsPanel = styled.div`
@@ -16,46 +16,68 @@ export const ResultsPanel = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 800px;
+    width: 100%;
 `;
 
 export const StyledTable = styled.table`
-    width: 80%;
-    margin: 20px 0;
+    width: 100%;
+    margin-top: 20px;
     border-collapse: collapse;
 
     th, td {
-        border: 1px solid #ddd;
+        border: 1px solid #e0e0e0;
         text-align: center;
-        padding: 10px;
+        padding: 15px;
     }
 
     th {
-        background-color: #4CAF50;
+        background-color: #6c63ff;
         color: white;
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
     }
 
     td {
         font-size: 16px;
+        color: #333;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #ffffff;
     }
 `;
 
 export const ButtonWrapper = styled.div`
-    margin-top: 20px;
+    margin-top: 30px;
+
     button {
-        background-color: #4CAF50;
+        background-color: #6c63ff;
         color: white;
-        padding: 10px 20px;
+        padding: 12px 24px;
         font-size: 16px;
+        font-weight: bold;
         border: none;
         border-radius: 8px;
         cursor: pointer;
+        transition: all 0.3s ease-in-out;
 
         &:hover {
-            background-color: #45a049;
+            background-color: #5a54d3;
+        }
+
+        &:active {
+            background-color: #4b45b3;
+            transform: scale(0.98);
         }
     }
 `;
