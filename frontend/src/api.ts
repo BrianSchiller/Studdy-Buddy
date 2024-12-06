@@ -48,3 +48,38 @@ export const fetchTopics = async (username: string): Promise<any[]> => {
         return [];
     }
 };
+
+// Fetch exam data
+export const fetchExam = async (topicId: number): Promise<any> => {
+    try {
+        const response = await axios.get(`${BASE_API_URL}/exam/${topicId}/`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching exam data:", error);
+        return null;
+    }
+};
+
+// Submit exam results
+export const submitExam = async (examId: number, username: string, score: number): Promise<void> => {
+    try {
+        await axios.post(`${BASE_API_URL}/submit_exam/${examId}/${username}/`, {
+            score,
+        });
+    } catch (error) {
+        console.error("Error submitting exam results:", error);
+    }
+};
+
+// API to check exam eligibility
+export const checkExamEligibility = async (username: string): Promise<boolean> => {
+    try {
+        const response = await axios.get<{ eligible: boolean }>(
+            `${BASE_API_URL}/exam-eligibility/${username}/`
+        );
+        return response.data.eligible;
+    } catch (error) {
+        console.error("Error checking exam eligibility:", error);
+        return false; // Default to false if there's an error
+    }
+};

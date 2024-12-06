@@ -9,6 +9,8 @@ import FillSentenceQuizPage from './pages/fillsentence_quiz/FillSentenceQuizPage
 import WordPairQuizPage from './pages/wordpair_quiz/WordPairQuizPage';
 import QuizComplete from './pages/quizcomplete/QuizCompletePage';
 import WordPairQuizComplete from './pages/quizcomplete/WordPairQuizComplete';
+import ExamPage from './pages/exam/ExamPage';
+import ExamComplete from './pages/exam/ExamCompletePage'; // Create a simple result display page
 import './App.css';
 
 const App: React.FC = () => {
@@ -23,6 +25,8 @@ const App: React.FC = () => {
                 <Route path="/wordpair-quiz" element={<WordPairQuizPage />} />
                 <Route path="/quiz-complete" element={<QuizComplete />} />
                 <Route path="/wordpair-quiz-complete" element={<WordPairQuizComplete />} />
+                <Route path="/exam" element={<ExamPage />} />
+                <Route path="/exam-complete" element={<ExamComplete />} />
             </Routes>
         </Router>
     );

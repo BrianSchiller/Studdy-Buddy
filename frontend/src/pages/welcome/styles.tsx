@@ -58,3 +58,20 @@ export const CardBox = styled.div`
     overflow-y: auto;
 `
 
+export const StyledButton = styled.button<{ $isEnabled?: boolean }>`
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: ${({ $isEnabled }) => ($isEnabled ? "#692dbd" : "#ddd")};
+    border: none;
+    border-radius: 8px;
+    cursor: ${({ $isEnabled }) => ($isEnabled ? "pointer" : "not-allowed")};
+    opacity: ${({ $isEnabled }) => ($isEnabled ? 1 : 0.6)};
+    transition: background-color 0.3s ease-in-out;
+
+    &:hover {
+        background-color: ${({ $isEnabled }) =>
+            $isEnabled ? "#5a24a1" : "#ddd"};
+    }
+`;
