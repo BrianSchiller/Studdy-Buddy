@@ -41,6 +41,8 @@ class Mistake(models.Model):
     user_progress = models.ForeignKey(UserProgress, on_delete=models.CASCADE, related_name='mistakes')
     level = models.IntegerField()
     mistakes_count = models.IntegerField(default=0)
+    duration = models.FloatField(default=0)
+    date_taken = models.DateTimeField(auto_now_add=True) 
 
     class Meta:
         unique_together = ('user_progress', 'level')

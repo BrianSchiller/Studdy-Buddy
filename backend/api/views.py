@@ -25,7 +25,8 @@ def check_user_exists(request, username):
 @api_view(['POST'])
 def update_user_progress(request, username):
     topic_id = request.data.get('topic_id')
-    mistakes_count = request.data.get('mistakes', 0) 
+    mistakes_count = request.data.get('mistakes', 0)
+    duration = request.data.get('duration', 0)
 
     try:
         user = User.objects.get(username=username)
@@ -43,13 +44,15 @@ def update_user_progress(request, username):
         mistake = Mistake.objects.create(
             user_progress=user_progress,
             level=user_progress.level,
-            mistakes_count=mistakes_count
+            mistakes_count=mistakes_count,
+            duration = duration
         )
 
         return Response({
             'message': 'Progress updated successfully.',
             'level': user_progress.level,
-            'mistakes': mistake.mistakes_count
+            'mistakes': mistake.mistakes_count,
+            'duration': mistake.duration
         }, status=status.HTTP_200_OK)
     except UserProgress.DoesNotExist:
         return Response({'message': 'User progress for this topic does not exist.'}, status=status.HTTP_404_NOT_FOUND)
