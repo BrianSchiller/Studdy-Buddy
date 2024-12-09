@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.db import transaction
 from collections import Counter
 from random import shuffle
+from django.db.models import Max
 
 
 def check_user_exists(request, username):
@@ -81,15 +82,38 @@ class TopicListView(APIView):
         user_styles = ExperimentGroup.objects.filter(user=user).values_list('topic_id', 'presentation_style')
         style_map = {topic_id: style for topic_id, style in user_styles}
 
-        # Build the response data, including the style
-        topics_data = [
-            {
+        # Get the most recent mistake date for each topic and level
+        user_progress = UserProgress.objects.filter(user=user).select_related('topic')
+        mistakes = Mistake.objects.filter(user_progress__in=user_progress) \
+            .values('user_progress__topic', 'level') \
+            .annotate(max_date=Max('date_taken'))
+
+        mistake_map = {}
+        for mistake in mistakes:
+            topic_id = mistake['user_progress__topic']
+            max_date = mistake['max_date']
+            mistake_map[topic_id] = max_date
+
+        # Prepare the response data
+        topics_data = []
+        for topic in topics:
+            # Get the user's progress for the topic
+            progress = user_progress.filter(topic=topic).first()
+            level = progress.level if progress else 0 
+
+            # Determine date_taken based on the level
+            if level == 0:
+                date_taken = 'Never'
+            else:
+                date_taken = mistake_map.get(topic.id, {})
+
+            # Add topic data to the response list
+            topics_data.append({
                 'topic_id': topic.id,
                 'topic_name': topic.name,
-                'style': style_map.get(topic.id, None)  # Get the style if assigned, else None
-            }
-            for topic in topics
-        ]
+                'style': style_map.get(topic.id, None),  # Get the style if assigned, else None
+                'date_taken': date_taken,
+            })
 
         return Response(topics_data, status=status.HTTP_200_OK)
 
