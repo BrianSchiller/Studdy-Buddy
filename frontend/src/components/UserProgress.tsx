@@ -1,4 +1,3 @@
-// UserProgress.tsx
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Text } from "./Text";
@@ -12,6 +11,7 @@ interface TopicProgress {
     topic_id: number;
     topic: string;
     level: number;
+    examTaken?: boolean;
 }
 
 // Styled Components
@@ -74,23 +74,28 @@ const UserProgress: React.FC<UserProgressProps> = ({ username }) => {
                 Your Progress
             </Text>
             {progress.length > 0 ? (
-                progress.map((topic) => (
-                    <ProgressCard key={topic.topic_id}>
-                        <Text size="18px" weight="bold">
-                            {topic.topic}
-                        </Text>
-                        <ProgressBar>
-                            <div
-                                style={{
-                                    width: `${(topic.level / 5) * 100}%`,
-                                }}
-                            />
-                        </ProgressBar>
-                        <ProgressLabel>
-                            Level {topic.level} / 5
-                        </ProgressLabel>
-                    </ProgressCard>
-                ))
+                progress.map((topic) => {
+                    const isCompleted = topic.examTaken;
+
+                    return (
+                        <ProgressCard key={topic.topic_id}>
+                            <Text size="18px" weight="bold">
+                                {topic.topic}
+                            </Text>
+                            <ProgressBar>
+                                <div
+                                    style={{
+                                        width: `${(topic.level / 4) * 100}%`,
+                                        backgroundColor: isCompleted ? "#4caf50" : "#6c63ff",
+                                    }}
+                                />
+                            </ProgressBar>
+                            <ProgressLabel>
+                                Level {topic.level} / 4 {isCompleted && "(Lection Completed)"}
+                            </ProgressLabel>
+                        </ProgressCard>
+                    );
+                })
             ) : (
                 <Text size="16px" color="#888">
                     No progress data available.
