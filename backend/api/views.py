@@ -240,7 +240,8 @@ def get_exam(request, topic_id):
         "questions": [
             {
                 "question": question.question,
-                "answer": question.answer_text
+                "answer": question.answer,
+                **({"text": question.text} if question.text else {})
             }
             for question in questions
         ]
@@ -264,15 +265,19 @@ def submit_exam(request, username, exam_id):
 
     if request.method == "POST":
         score = request.data.get('score')
+        duration = request.data.get("duration")
 
         if not isinstance(score, int) or score < 0:
             return JsonResponse({'error': 'Score must be a non-negative integer.'}, status=400)
+        if not isinstance(duration, int) or duration < 0:
+            return JsonResponse({'error': 'Duration must be a non-negative integer.'}, status=400)
 
         # Save the result
         exam_result = ExamResult.objects.create(
             user=user,
             exam=exam,
-            score=score
+            score=score,
+            duration=duration
         )
 
         return JsonResponse({
@@ -280,6 +285,7 @@ def submit_exam(request, username, exam_id):
             'exam_id': exam_result.exam.id,
             'user_id': exam_result.user.id,
             'score': exam_result.score,
+            'duration': exam_result.duration,
             'date_taken': exam_result.date_taken
         })
 
