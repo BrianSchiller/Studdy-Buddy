@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.db import transaction
 from collections import Counter
 from random import shuffle
+from django.db.models import Max
 
 
 def check_user_exists(request, username):
@@ -25,7 +26,8 @@ def check_user_exists(request, username):
 @api_view(['POST'])
 def update_user_progress(request, username):
     topic_id = request.data.get('topic_id')
-    mistakes_count = request.data.get('mistakes', 0) 
+    mistakes_count = request.data.get('mistakes', 0)
+    duration = request.data.get('duration', 0)
 
     try:
         user = User.objects.get(username=username)
@@ -43,13 +45,15 @@ def update_user_progress(request, username):
         mistake = Mistake.objects.create(
             user_progress=user_progress,
             level=user_progress.level,
-            mistakes_count=mistakes_count
+            mistakes_count=mistakes_count,
+            duration = duration
         )
 
         return Response({
             'message': 'Progress updated successfully.',
             'level': user_progress.level,
-            'mistakes': mistake.mistakes_count
+            'mistakes': mistake.mistakes_count,
+            'duration': mistake.duration
         }, status=status.HTTP_200_OK)
     except UserProgress.DoesNotExist:
         return Response({'message': 'User progress for this topic does not exist.'}, status=status.HTTP_404_NOT_FOUND)
@@ -78,15 +82,38 @@ class TopicListView(APIView):
         user_styles = ExperimentGroup.objects.filter(user=user).values_list('topic_id', 'presentation_style')
         style_map = {topic_id: style for topic_id, style in user_styles}
 
-        # Build the response data, including the style
-        topics_data = [
-            {
+        # Get the most recent mistake date for each topic and level
+        user_progress = UserProgress.objects.filter(user=user).select_related('topic')
+        mistakes = Mistake.objects.filter(user_progress__in=user_progress) \
+            .values('user_progress__topic', 'level') \
+            .annotate(max_date=Max('date_taken'))
+
+        mistake_map = {}
+        for mistake in mistakes:
+            topic_id = mistake['user_progress__topic']
+            max_date = mistake['max_date']
+            mistake_map[topic_id] = max_date
+
+        # Prepare the response data
+        topics_data = []
+        for topic in topics:
+            # Get the user's progress for the topic
+            progress = user_progress.filter(topic=topic).first()
+            level = progress.level if progress else 0 
+
+            # Determine date_taken based on the level
+            if level == 0:
+                date_taken = 'Never'
+            else:
+                date_taken = mistake_map.get(topic.id, {})
+
+            # Add topic data to the response list
+            topics_data.append({
                 'topic_id': topic.id,
                 'topic_name': topic.name,
-                'style': style_map.get(topic.id, None)  # Get the style if assigned, else None
-            }
-            for topic in topics
-        ]
+                'style': style_map.get(topic.id, None),  # Get the style if assigned, else None
+                'date_taken': date_taken,
+            })
 
         return Response(topics_data, status=status.HTTP_200_OK)
 
@@ -213,7 +240,8 @@ def get_exam(request, topic_id):
         "questions": [
             {
                 "question": question.question,
-                "answer": question.answer_text
+                "answer": question.answer,
+                **({"text": question.text} if question.text else {})
             }
             for question in questions
         ]
@@ -237,15 +265,19 @@ def submit_exam(request, username, exam_id):
 
     if request.method == "POST":
         score = request.data.get('score')
+        duration = request.data.get("duration")
 
         if not isinstance(score, int) or score < 0:
             return JsonResponse({'error': 'Score must be a non-negative integer.'}, status=400)
+        if not isinstance(duration, int) or duration < 0:
+            return JsonResponse({'error': 'Duration must be a non-negative integer.'}, status=400)
 
         # Save the result
         exam_result = ExamResult.objects.create(
             user=user,
             exam=exam,
-            score=score
+            score=score,
+            duration=duration
         )
 
         return JsonResponse({
@@ -253,6 +285,7 @@ def submit_exam(request, username, exam_id):
             'exam_id': exam_result.exam.id,
             'user_id': exam_result.user.id,
             'score': exam_result.score,
+            'duration': exam_result.duration,
             'date_taken': exam_result.date_taken
         })
 

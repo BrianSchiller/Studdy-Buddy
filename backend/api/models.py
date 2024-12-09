@@ -41,6 +41,8 @@ class Mistake(models.Model):
     user_progress = models.ForeignKey(UserProgress, on_delete=models.CASCADE, related_name='mistakes')
     level = models.IntegerField()
     mistakes_count = models.IntegerField(default=0)
+    duration = models.FloatField(default=0)
+    date_taken = models.DateTimeField(auto_now_add=True) 
 
     class Meta:
         unique_together = ('user_progress', 'level')
@@ -71,7 +73,8 @@ class Exam(models.Model):
 class ExamAnswer(models.Model):
     exam = models.ForeignKey(Exam, related_name='answers', on_delete=models.CASCADE)
     question = models.TextField()
-    answer_text = models.CharField(max_length=255)
+    answer = models.CharField(max_length=255)
+    text = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"Answer for: {self.question}"
@@ -79,7 +82,8 @@ class ExamAnswer(models.Model):
 class ExamResult(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     exam = models.ForeignKey(Exam, related_name='results', on_delete=models.CASCADE)
-    score = models.IntegerField(null=True, blank=True)  
+    score = models.IntegerField(default=0)
+    duration = models.FloatField(default=0)
     date_taken = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
