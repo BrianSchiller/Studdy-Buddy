@@ -5,19 +5,21 @@ import {
     ExamHeader,
     ExamTitle,
     ExamTimer,
+    RecipeContainer,
+    RecipeTitle,
+    RecipeText,
     QuestionContainer,
     QuestionText,
-    OptionsContainer,
-    OptionButton,
+    InputField,
     SubmitButtonWrapper,
     SubmitButton,
 } from "./styleExamPage";
-import { fetchExam, fetchRandomWords, submitExam } from "../../api";
+import { fetchExam, submitExam } from "../../api";
 
 interface Question {
     question: string;
     answer: string;
-    options: string[];
+    text: string;
 }
 
 interface ExamData {
@@ -34,25 +36,17 @@ const ExamPage: React.FC = () => {
 
     const [examData, setExamData] = useState<ExamData | null>(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [selectedOption, setSelectedOption] = useState<string | null>(null);
-    const [remainingTime, setRemainingTime] = useState<number>(1800);
+    const [userAnswer, setUserAnswer] = useState<string>("");
     const [score, setScore] = useState<number>(0);
     const [loading, setLoading] = useState(true);
+    const [timer, setTimer] = useState<number>(0);
 
-    // State to track user answers
     const [answers, setAnswers] = useState<{ [key: number]: string }>({});
 
     useEffect(() => {
         const fetchExamData = async () => {
             try {
                 const data = await fetchExam(topicId);
-                for (const question of data.questions) {
-                    const randomOptions = await fetchRandomWords(3);
-                    question.options = [
-                        ...randomOptions.map((word) => word.spanish),
-                        question.answer,
-                    ].sort(() => Math.random() - 0.5); // Shuffle options
-                }
                 setExamData(data);
             } catch (error) {
                 console.error("Error fetching exam data:", error);
@@ -64,57 +58,46 @@ const ExamPage: React.FC = () => {
     }, [topicId]);
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            setRemainingTime((prev) => {
-                if (prev <= 0) {
-                    clearInterval(timer);
-                    handleSubmit();
-                    return 0;
-                }
-                return prev - 1;
-            });
+        const timerId = setInterval(() => {
+            setTimer((prev) => prev + 1);
         }, 1000);
 
-        return () => clearInterval(timer);
+        return () => clearInterval(timerId);
     }, []);
 
-    const handleAnswerSelect = (option: string) => {
-        setSelectedOption(option);
-
-        // Update answers state
-        setAnswers((prevAnswers) => ({
-            ...prevAnswers,
-            [currentQuestionIndex]: option,
-        }));
-
-        // Update score if answer is correct
-        if (option === examData?.questions[currentQuestionIndex]?.answer) {
-            setScore((prevScore) => prevScore + 1);
-        }
-    };
-
     const handleNextOrFinish = async () => {
+        const updatedAnswers = { ...answers, [currentQuestionIndex]: userAnswer };
+        setAnswers(updatedAnswers);
+
         if (currentQuestionIndex < (examData?.questions.length || 0) - 1) {
             setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-            setSelectedOption(null);
+            setUserAnswer("");
         } else {
-            await handleSubmit();
+            await handleSubmit(updatedAnswers);
         }
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (finalAnswers = answers) => {
+        let calculatedScore = 0;
+        examData?.questions.forEach((q, index) => {
+            if (finalAnswers[index]?.trim() === q.answer.trim()) {
+                calculatedScore += 1;
+            }
+        });
+
         try {
-            await submitExam(examData?.id || 0, username, score, answers);
+            await submitExam(examData?.id || 0, username, calculatedScore, finalAnswers, timer);
             navigate("/exam-complete", {
                 state: {
                     username,
-                    score,
+                    score: calculatedScore,
                     totalQuestions: examData?.questions.length || 0,
                     questions: examData?.questions.map((q, index) => ({
                         question: q.question,
                         correctAnswer: q.answer,
-                        userAnswer: answers[index] || "No Answer",
+                        userAnswer: finalAnswers[index] || "No Answer",
                     })),
+                    duration: timer,
                 },
             });
         } catch (error) {
@@ -136,44 +119,30 @@ const ExamPage: React.FC = () => {
         );
     }
 
-    if (!examData || !examData.questions) {
-        return (
-            <StyledExamContainer>
-                <ExamTitle>Error: Unable to load exam</ExamTitle>
-            </StyledExamContainer>
-        );
-    }
-
-    const currentQuestion = examData.questions[currentQuestionIndex];
+    const currentQuestion = examData?.questions[currentQuestionIndex];
 
     return (
         <StyledExamContainer>
             <ExamHeader>
-                <ExamTitle>{examData.exam_text}</ExamTitle>
-                <ExamTimer>Time Remaining: {formatTime(remainingTime)}</ExamTimer>
+                <ExamTitle>{examData?.exam_text}</ExamTitle>
+                <ExamTimer>Elapsed Time: {formatTime(timer)}</ExamTimer>
             </ExamHeader>
+            <RecipeContainer>
+                <RecipeTitle>Recipe:</RecipeTitle>
+                <RecipeText>{currentQuestion?.text.split("\r\n").map((line, i) => <p key={i}>{line}</p>)}</RecipeText>
+            </RecipeContainer>
             <QuestionContainer>
-                <QuestionText>{currentQuestion.question}</QuestionText>
-                <OptionsContainer>
-                    {currentQuestion.options?.map((option, index) => (
-                        <OptionButton
-                            key={index}
-                            selected={selectedOption === option}
-                            onClick={() => handleAnswerSelect(option)}
-                        >
-                            {option}
-                        </OptionButton>
-                    ))}
-                </OptionsContainer>
+                <QuestionText>{currentQuestion?.question}</QuestionText>
+                <InputField
+                    type="text"
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    placeholder="Type your answer here"
+                />
             </QuestionContainer>
             <SubmitButtonWrapper>
-                <SubmitButton
-                    onClick={handleNextOrFinish}
-                    disabled={!selectedOption}
-                >
-                    {currentQuestionIndex < (examData?.questions.length || 0) - 1
-                        ? "Next"
-                        : "Finish"}
+                <SubmitButton onClick={handleNextOrFinish} disabled={!userAnswer.trim()}>
+                    {currentQuestionIndex < (examData?.questions.length || 0) - 1 ? "Next" : "Finish"}
                 </SubmitButton>
             </SubmitButtonWrapper>
         </StyledExamContainer>

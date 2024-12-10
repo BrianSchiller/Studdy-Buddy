@@ -1,103 +1,102 @@
 import styled from "styled-components";
 
-// Main container for the exam page
+// Hauptcontainer für die ExamPage
 export const StyledExamContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 1440px;
-    margin: auto;
+    max-width: 800px;
+    margin: 40px auto;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: #ffffff;
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
-// Header section
+// Header für den Titel und die Timer-Anzeige
 export const ExamHeader = styled.div`
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
+    gap: 10px;
+    text-align: center;
     padding: 20px;
-    border-radius: 8px;
     background-color: #f7f0ff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 `;
 
-// Exam title
 export const ExamTitle = styled.h1`
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     color: #4a4a4a;
     margin: 0;
 `;
 
-// Timer display in the header
 export const ExamTimer = styled.div`
-    font-size: 16px;
+    font-size: 18px;
     color: #692dbd;
     font-weight: bold;
 `;
 
-// Question section
-export const QuestionContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 30px;
-    padding: 20px;
+// Container für das Rezept
+export const RecipeContainer = styled.div`
+    background-color: #f1f1f1;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
-    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 20px;
+    line-height: 1.6;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-// Question text
+export const RecipeTitle = styled.h2`
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+`;
+
+export const RecipeText = styled.div`
+    font-size: 16px;
+    color: #555;
+`;
+
+// Container für die Frage
+export const QuestionContainer = styled.div`
+    padding: 20px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+`;
+
 export const QuestionText = styled.p`
     font-size: 18px;
     font-weight: 500;
     color: #333;
-    margin: 0 0 20px;
+    margin-bottom: 15px;
 `;
 
-// Options container
-export const OptionsContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-`;
-
-// Individual option button
-export const OptionButton = styled.button<{ selected?: boolean; correct?: boolean; incorrect?: boolean }>`
+// Eingabefeld für die Antwort
+export const InputField = styled.input`
+    width: 100%;
     padding: 12px;
     font-size: 16px;
-    border: 2px solid ${({ selected }) => (selected ? "#692dbd" : "#ddd")};
+    border: 1px solid #ccc;
     border-radius: 8px;
-    background-color: ${({ correct, incorrect }) =>
-        correct ? "#4caf50" : incorrect ? "#f44336" : "white"};
-    color: ${({ correct, incorrect }) =>
-        correct || incorrect ? "white" : "#333"};
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
+    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
-    &:hover {
-        background-color: ${({ selected, correct, incorrect }) =>
-            correct
-                ? "#45a049"
-                : incorrect
-                ? "#e53935"
-                : selected
-                ? "#ddd"
-                : "#f0f0f0"};
-    }
-
-    &:disabled {
-        cursor: not-allowed;
-        opacity: 0.7;
+    &:focus {
+        outline: none;
+        border-color: #692dbd;
+        box-shadow: 0 0 5px rgba(105, 45, 189, 0.5);
     }
 `;
 
-// Submit button
+// Container für den Submit-Button
 export const SubmitButtonWrapper = styled.div`
     display: flex;
     justify-content: center;

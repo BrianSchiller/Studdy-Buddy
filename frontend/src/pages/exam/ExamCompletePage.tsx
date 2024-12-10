@@ -19,15 +19,13 @@ const ExamCompletePage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-
     // Destructure state and provide defaults if missing
     const {
         username = "Guest",
         score = 0,
         totalQuestions = 0,
         questions = [],
-        answers = {},
-        correctAnswers = [],
+        duration = 0, // New duration field in seconds
     } = location.state || {};
 
     // Log state for debugging
@@ -43,6 +41,13 @@ const ExamCompletePage: React.FC = () => {
         navigate("/welcome", { state: { username } });
     };
 
+    // Format duration to MM:SS
+    const formatDuration = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}m ${secs < 10 ? "0" : ""}${secs}s`;
+    };
+
     if (!location.state) {
         return null; // Avoid rendering if no data is available
     }
@@ -54,6 +59,9 @@ const ExamCompletePage: React.FC = () => {
                 <Text size="24px">
                     Your Score: {score} / {totalQuestions} (
                     {((score / totalQuestions) * 100).toFixed(2)}%)
+                </Text>
+                <Text size="20px" color="#555">
+                    Total Time Taken: {formatDuration(duration)}
                 </Text>
                 <StyledTable>
                     <thead>

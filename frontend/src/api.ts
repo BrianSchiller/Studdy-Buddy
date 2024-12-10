@@ -64,12 +64,14 @@ export const submitExam = async (
     examId: number,
     username: string,
     score: number,
-    answers: { [key: number]: string }
+    answers: { [key: number]: string },
+    duration: number
 ): Promise<void> => {
     try {
         await axios.post(`${BASE_API_URL}/submit_exam/${examId}/${username}/`, {
             score,
             answers,
+            duration,
         });
         console.log("Exam submitted successfully.");
     } catch (error) {
