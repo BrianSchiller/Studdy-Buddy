@@ -26,11 +26,12 @@ export const fetchRandomWords = async (amount: number): Promise<VocabWord[]> => 
 };
 
 // Update user progress with mistakes and topic ID
-export const updateUserProgress = async (username: string, topicId: number, mistakes: number): Promise<void> => {
+export const updateUserProgress = async (username: string, topicId: number, mistakes: number, duration: number): Promise<void> => {
     try {
         await axios.post(`${BASE_API_URL}/update-progress/${username}/`, {
             topic_id: topicId,
             mistakes,
+            duration
         });
     } catch (error) {
         console.error("Error updating user progress:", error);

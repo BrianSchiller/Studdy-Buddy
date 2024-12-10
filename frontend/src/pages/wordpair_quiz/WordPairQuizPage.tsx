@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Text } from "../../components/Text";
 import { Menu } from "../../components/Menu";
 import { shuffleArray } from "../../utils/shuffleArray";
-import { fetchVocabWords } from "../../api";
+import { fetchVocabWords, updateUserProgress } from "../../api";
 import { NavigationHeader } from "../../components/NavigationHeader";
 import {
     StyledContainer,
@@ -20,7 +20,7 @@ interface WordPair {
     english: string;
     spanish: string;
     matched: boolean;
-    picture: string; // Added for picture URLs
+    picture: string;
 }
 
 const WordPairQuizPage: React.FC = () => {
@@ -45,7 +45,6 @@ const WordPairQuizPage: React.FC = () => {
         const initializeQuiz = async () => {
             const vocabWords = await fetchVocabWords(topicId);
 
-            // Randomly select 10 words
             const selectedWords = shuffleArray(vocabWords).slice(0, 10);
 
             const wordPairs = selectedWords.map((word, index) => ({
@@ -53,11 +52,11 @@ const WordPairQuizPage: React.FC = () => {
                 english: word.english,
                 spanish: word.spanish,
                 matched: false,
-                picture: `https://placehold.co/100x100?text=Image+${index + 1}`, // Placeholder image
+                picture: `https://placehold.co/100x100?text=Image+${index + 1}`,
             }));
 
             setWords(wordPairs);
-            updateCurrentSet(wordPairs, 0); // Initialize with the first set
+            updateCurrentSet(wordPairs, 0);
         };
 
         const startTimer = () => {
@@ -71,16 +70,14 @@ const WordPairQuizPage: React.FC = () => {
         initializeQuiz();
         const timerId = startTimer();
 
-        return () => {
-            clearInterval(timerId);
-        };
+        return () => clearInterval(timerId);
     }, [topicId]);
 
     const updateCurrentSet = (wordPairs: WordPair[], setIndex: number) => {
         const currentSet = wordPairs.slice(setIndex * pairsPerSet, (setIndex + 1) * pairsPerSet);
         setShuffledEnglish(shuffleArray(currentSet));
         setShuffledSpanish(shuffleArray(currentSet));
-        setIsPicturePhase(setIndex > 0); // Toggle picture phase for the second set
+        setIsPicturePhase(setIndex > 0);
     };
 
     const handleWordClick = (id: number, type: "english" | "spanish") => {
@@ -104,15 +101,12 @@ const WordPairQuizPage: React.FC = () => {
                 );
                 setShuffledEnglish((prev) => prev.filter((word) => word.id !== englishWord.id));
                 setShuffledSpanish((prev) => prev.filter((word) => word.id !== spanishWord.id));
-                setSelectedEnglish(null);
-                setSelectedSpanish(null);
             } else {
-                setMistakes((prev) => prev + 1); // Increment mistakes
-                setTimeout(() => {
-                    setSelectedEnglish(null);
-                    setSelectedSpanish(null);
-                }, 1000);
+                setMistakes((prev) => prev + 1);
             }
+
+            setSelectedEnglish(null);
+            setSelectedSpanish(null);
         }
     }, [selectedEnglish, selectedSpanish, words]);
 
@@ -126,11 +120,12 @@ const WordPairQuizPage: React.FC = () => {
             setCurrentSetIndex(nextSetIndex);
             updateCurrentSet(words, nextSetIndex);
         } else if (words.length > 0 && words.every((word) => word.matched)) {
+            updateUserProgress(username, topicId, mistakes, timer);
             navigate("/wordpair-quiz-complete", {
                 state: { username, topicId, timer, mistakes },
             });
         }
-    }, [words, currentSetIndex, navigate, topicId, username, mistakes]);
+    }, [words, currentSetIndex, navigate, topicId, username, mistakes, timer]);
 
     const getCurrentSet = (array: WordPair[]) => {
         return array.slice(currentSetIndex * pairsPerSet, (currentSetIndex + 1) * pairsPerSet);
@@ -151,47 +146,53 @@ const WordPairQuizPage: React.FC = () => {
                     timer={timer}
                 />
                 <WordPairRow>
-                <WordGrid>
-                    <FlagHeader>
-                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png" alt="English Flag" />
-                        English
-                    </FlagHeader>
-                    {shuffledEnglish.map((word) =>
-                        isPicturePhase ? (
-                            <ImageCard
-                                key={`image-${word.id}`}
-                                selected={selectedEnglish === word.id}
-                                onClick={() => handleWordClick(word.id, "english")}
-                            >
-                                <img src={word.picture} alt={word.english} />
-                            </ImageCard>
-                        ) : (
+                    <WordGrid>
+                        <FlagHeader>
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png"
+                                alt="English Flag"
+                            />
+                            English
+                        </FlagHeader>
+                        {shuffledEnglish.map((word) =>
+                            isPicturePhase ? (
+                                <ImageCard
+                                    key={`image-${word.id}`}
+                                    selected={selectedEnglish === word.id}
+                                    onClick={() => handleWordClick(word.id, "english")}
+                                >
+                                    <img src={word.picture} alt={word.english} />
+                                </ImageCard>
+                            ) : (
+                                <WordCard
+                                    key={`english-${word.id}`}
+                                    selected={selectedEnglish === word.id}
+                                    onClick={() => handleWordClick(word.id, "english")}
+                                >
+                                    {word.english}
+                                </WordCard>
+                            )
+                        )}
+                    </WordGrid>
+                    <WordGrid>
+                        <FlagHeader>
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Flag_of_Spain.svg/1200px-Flag_of_Spain.svg.png"
+                                alt="Spanish Flag"
+                            />
+                            Spanish
+                        </FlagHeader>
+                        {shuffledSpanish.map((word) => (
                             <WordCard
-                                key={`english-${word.id}`}
-                                selected={selectedEnglish === word.id}
-                                onClick={() => handleWordClick(word.id, "english")}
+                                key={`spanish-${word.id}`}
+                                selected={selectedSpanish === word.id}
+                                onClick={() => handleWordClick(word.id, "spanish")}
                             >
-                                {word.english}
+                                {word.spanish}
                             </WordCard>
-                        )
-                    )}
-                </WordGrid>
-                <WordGrid>
-                    <FlagHeader>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Flag_of_Spain.svg/1200px-Flag_of_Spain.svg.png" alt="Spanish Flag" />
-                        Spanish
-                    </FlagHeader>
-                    {shuffledSpanish.map((word) => (
-                        <WordCard
-                            key={`spanish-${word.id}`}
-                            selected={selectedSpanish === word.id}
-                            onClick={() => handleWordClick(word.id, "spanish")}
-                        >
-                            {word.spanish}
-                        </WordCard>
-                    ))}
-                </WordGrid>
-            </WordPairRow>
+                        ))}
+                    </WordGrid>
+                </WordPairRow>
             </DashboardPanel>
         </StyledContainer>
     );

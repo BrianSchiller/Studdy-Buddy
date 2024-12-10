@@ -23,30 +23,36 @@ const shuffleAndLimit = <T,>(array: T[], limit: number): T[] => {
 
 const QuizPage: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const username = location.state?.username || "Guest";
+    const topicId = location.state?.topicId;
 
     // States
     const [questions, setQuestions] = useState<QuizQuestion[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [loading, setLoading] = useState(true); // Initial loading state
-    const [loadingResults, setLoadingResults] = useState(false); // Loading results state
+    const [loading, setLoading] = useState(true);
+    const [loadingResults, setLoadingResults] = useState(false);
     const [answerSelected, setAnswerSelected] = useState<string | null>(null);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [buttonState, setButtonState] = useState<"check" | "next" | "finish">("check");
-    const [score, setScore] = useState<number>(0); // Track the score
-    const location = useLocation();
-    const username = location.state?.username || "Guest"; // Added fallback username for clarity
-    const topicId = location.state.topicId;
+    const [score, setScore] = useState<number>(0);
+    const [timer, setTimer] = useState<number>(0);
 
-    // Fetch questions
+    // Timer effect
+    useEffect(() => {
+        const timerId = setInterval(() => {
+            setTimer((prev) => prev + 1);
+        }, 1000);
+
+        return () => clearInterval(timerId);
+    }, []);
+
     useEffect(() => {
         const loadQuestions = async () => {
             try {
                 const vocabWords = await fetchVocabWords(topicId);
-
-                // Select up to 10 questions and generate quiz questions
                 const limitedWords = shuffleAndLimit(vocabWords, 10);
-                const quizQuestions = await generateQuizQuestions(limitedWords, 4); // Adjusted for async function
-
+                const quizQuestions = await generateQuizQuestions(limitedWords, 4);
                 setQuestions(quizQuestions);
                 setLoading(false);
             } catch (error) {
@@ -57,21 +63,11 @@ const QuizPage: React.FC = () => {
         loadQuestions();
     }, [topicId]);
 
-    // Handle answer selection
-    const handleAnswerSelect = (answer: string) => {
-        setAnswerSelected(answer);
-    };
-
-    // Handle "Check" or "Next" button actions
     const handleButtonClick = async () => {
         if (buttonState === "check" && answerSelected !== null) {
             const isAnswerCorrect = questions[currentIndex].correctAnswer === answerSelected;
             setIsCorrect(isAnswerCorrect);
-
-            if (isAnswerCorrect) {
-                setScore((prevScore) => prevScore + 1);
-            }
-
+            if (isAnswerCorrect) setScore((prevScore) => prevScore + 1);
             setButtonState(currentIndex === questions.length - 1 ? "finish" : "next");
         } else if (buttonState === "next") {
             setCurrentIndex((prevIndex) => prevIndex + 1);
@@ -79,50 +75,18 @@ const QuizPage: React.FC = () => {
             setIsCorrect(null);
             setButtonState("check");
         } else if (buttonState === "finish") {
-            setLoadingResults(true); // Show loading indicator
-
-            const totalQuestions = questions.length;
-            const mistakes = totalQuestions - score;
-
+            setLoadingResults(true);
+            const mistakes = questions.length - score;
             try {
-                // Send progress update to backend
-                await updateUserProgress(username, topicId, mistakes);
-
-                // Navigate to quiz-complete page
-                navigate("/quiz-complete", { state: { username, topicId, score, total: totalQuestions } });
+                await updateUserProgress(username, topicId, mistakes, timer);
+                navigate("/quiz-complete", { state: { username, topicId, score, total: questions.length } });
             } catch (error) {
                 console.error("Error submitting quiz results:", error);
             } finally {
-                setLoadingResults(false); // Hide loading indicator
+                setLoadingResults(false);
             }
         }
     };
-
-    const handleCancelQuiz = () => {
-        navigate("/welcome");
-    };
-
-    // Render loading screen when results are being prepared
-    if (loadingResults) {
-        return (
-            <StyledContainer>
-                <Text size="24px" weight="bold">
-                    Preparing your results...
-                </Text>
-            </StyledContainer>
-        );
-    }
-
-    // Render loading screen when quiz questions are loading
-    if (loading) {
-        return (
-            <StyledContainer>
-                <Text size="24px" weight="bold">
-                    Loading Quiz...
-                </Text>
-            </StyledContainer>
-        );
-    }
 
     return (
         <StyledContainer>
@@ -130,37 +94,31 @@ const QuizPage: React.FC = () => {
             <DashboardPanel>
                 <NavigationHeader
                     title="Click on the right matching word"
-                    imageSrc="https://placehold.co/95" // Replace with your image path or URL
+                    imageSrc="https://placehold.co/95"
                     currentIndex={currentIndex}
                     totalQuestions={questions.length}
                     progress={(currentIndex / questions.length) * 100}
+                    timer={timer}
                 />
                 <MultipleChoice_Quiz>
                     {questions.length > 0 && (
                         <MultipleChoice
                             question={questions[currentIndex].question}
-                            image={questions[currentIndex].image || "https://placehold.co/95"} // Use provided image or fallback
+                            image={questions[currentIndex].image || "https://placehold.co/95"}
                             options={questions[currentIndex].options}
-                            onAnswerSelect={handleAnswerSelect}
+                            onAnswerSelect={setAnswerSelected}
                             selectedAnswer={answerSelected}
                             correctAnswer={isCorrect === null ? null : questions[currentIndex].correctAnswer}
                         />
                     )}
                     <NextButtonWrapper>
-                        <Button
-                            onClick={handleButtonClick}
-                            disabled={buttonState === "check" && answerSelected === null}
-                        >
-                            {buttonState === "check"
-                                ? "Check"
-                                : buttonState === "next"
-                                ? "Next"
-                                : "Finish"}
+                        <Button onClick={handleButtonClick} disabled={buttonState === "check" && !answerSelected}>
+                            {buttonState === "check" ? "Check" : buttonState === "next" ? "Next" : "Finish"}
                         </Button>
                     </NextButtonWrapper>
                 </MultipleChoice_Quiz>
                 <NavigationFooter>
-                    <Button onClick={handleCancelQuiz}>Cancel Quiz</Button>
+                    <Button onClick={() => navigate("/welcome")}>Cancel Quiz</Button>
                 </NavigationFooter>
             </DashboardPanel>
         </StyledContainer>
