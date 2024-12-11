@@ -15,15 +15,25 @@ interface TopicProgress {
 }
 
 // Styled Components
+const ProgressContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    background-color: #f9fafc;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+`;
+
 const ProgressCard = styled.div`
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
-    padding: 15px;
+    padding: 20px;
     border-radius: 12px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     transition: transform 0.2s ease-in-out;
 
     &:hover {
@@ -50,7 +60,21 @@ const ProgressLabel = styled.span`
     font-size: 14px;
     color: #555;
     font-weight: bold;
-    text-align: right;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+`;
+
+const Checkmark = styled.span`
+    color: #4caf50;
+    font-size: 18px;
+    margin-left: 8px;
+`;
+
+const NoProgressMessage = styled(Text)`
+    text-align: center;
+    font-size: 16px;
+    color: #888;
 `;
 
 const UserProgress: React.FC<UserProgressProps> = ({ username }) => {
@@ -69,8 +93,8 @@ const UserProgress: React.FC<UserProgressProps> = ({ username }) => {
     }, [username]);
 
     return (
-        <div>
-            <Text size="24px" weight="bold">
+        <ProgressContainer>
+            <Text size="24px" weight="bold" color="#2c3e50">
                 Your Progress
             </Text>
             {progress.length > 0 ? (
@@ -79,7 +103,7 @@ const UserProgress: React.FC<UserProgressProps> = ({ username }) => {
 
                     return (
                         <ProgressCard key={topic.topic_id}>
-                            <Text size="18px" weight="bold">
+                            <Text size="18px" weight="bold" color="#333">
                                 {topic.topic}
                             </Text>
                             <ProgressBar>
@@ -91,17 +115,22 @@ const UserProgress: React.FC<UserProgressProps> = ({ username }) => {
                                 />
                             </ProgressBar>
                             <ProgressLabel>
-                                Level {topic.level} / 4 {isCompleted && "(Lection Completed)"}
+                                <span>
+                                    Level {topic.level} / 4{" "}
+                                    {isCompleted && (
+                                        <span>
+                                            (Lection Completed) <Checkmark>✔</Checkmark>
+                                        </span>
+                                    )}
+                                </span>
                             </ProgressLabel>
                         </ProgressCard>
                     );
                 })
             ) : (
-                <Text size="16px" color="#888">
-                    No progress data available.
-                </Text>
+                <NoProgressMessage>No progress data available.</NoProgressMessage>
             )}
-        </div>
+        </ProgressContainer>
     );
 };
 

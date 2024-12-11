@@ -48,6 +48,12 @@ const ExamCompletePage: React.FC = () => {
         return `${minutes}m ${secs < 10 ? "0" : ""}${secs}s`;
     };
 
+    // Extract the numerical part from a string
+    const extractNumber = (input: string): string => {
+        const match = input.match(/-?\d+(\.\d+)?/); // Match numbers (including negatives and decimals)
+        return match ? match[0] : "";
+    };
+
     if (!location.state) {
         return null; // Avoid rendering if no data is available
     }
@@ -74,7 +80,10 @@ const ExamCompletePage: React.FC = () => {
                     </thead>
                     <tbody>
                         {questions.map((q: QuestionResult, index: number) => {
-                            const isCorrect = q.userAnswer === q.correctAnswer;
+                            const userAnswerNumber = extractNumber(q.userAnswer);
+                            const correctAnswerNumber = extractNumber(q.correctAnswer);
+                            const isCorrect = userAnswerNumber === correctAnswerNumber;
+
                             return (
                                 <tr key={index}>
                                     <td>{q.question}</td>

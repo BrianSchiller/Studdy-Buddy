@@ -10,6 +10,8 @@ import {
     RecipeText,
     AnimalContainer,
     AnimalTable,
+    JobContainer,
+    JobTable,
     QuestionContainer,
     QuestionText,
     InputField,
@@ -80,32 +82,43 @@ const ExamPage: React.FC = () => {
     };
 
     const handleSubmit = async (finalAnswers = answers) => {
-        let calculatedScore = 0;
-        examData?.questions.forEach((q, index) => {
-            if (finalAnswers[index]?.trim() === q.answer.trim()) {
-                calculatedScore += 1;
-            }
-        });
+    let calculatedScore = 0;
 
-        try {
-            await submitExam(examData?.id || 0, username, calculatedScore, finalAnswers, timer);
-            navigate("/exam-complete", {
-                state: {
-                    username,
-                    score: calculatedScore,
-                    totalQuestions: examData?.questions.length || 0,
-                    questions: examData?.questions.map((q, index) => ({
-                        question: q.question,
-                        correctAnswer: q.answer,
-                        userAnswer: finalAnswers[index] || "No Answer",
-                    })),
-                    duration: timer,
-                },
-            });
-        } catch (error) {
-            console.error("Error submitting exam:", error);
-        }
+    // Function to extract the first valid number from a string
+    const extractNumber = (input: string): string => {
+        const match = input.match(/-?\d+(\.\d+)?/); // Match the first number (including negatives and decimals)
+        return match ? match[0] : "";
     };
+
+    examData?.questions.forEach((q, index) => {
+        const userAnswerNumber = extractNumber(finalAnswers[index] || "");
+        const correctAnswerNumber = extractNumber(q.answer);
+
+        if (userAnswerNumber === correctAnswerNumber) {
+            calculatedScore += 1;
+        }
+    });
+
+    try {
+        await submitExam(examData?.id || 0, username, calculatedScore, finalAnswers, timer);
+        navigate("/exam-complete", {
+            state: {
+                username,
+                score: calculatedScore,
+                totalQuestions: examData?.questions.length || 0,
+                questions: examData?.questions.map((q, index) => ({
+                    question: q.question,
+                    correctAnswer: q.answer,
+                    userAnswer: finalAnswers[index] || "No Answer",
+                })),
+                duration: timer,
+            },
+        });
+    } catch (error) {
+        console.error("Error submitting exam:", error);
+    }
+};
+    
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -140,6 +153,16 @@ const ExamPage: React.FC = () => {
                         ))}
                     </AnimalTable>
                 </AnimalContainer>
+            ) : topicId === 3 ? (
+                // Custom Design for Jobs (topicId: 3)
+                <JobContainer>
+                    <RecipeTitle>Yearly Salary List</RecipeTitle>
+                    <JobTable>
+                        {currentQuestion?.text.split("\r\n").map((line, i) => (
+                            <p key={i}>{line}</p>
+                        ))}
+                    </JobTable>
+                </JobContainer>
             ) : (
                 // Standard Design for Recipes
                 <RecipeContainer>
