@@ -23,8 +23,8 @@ def check_user_exists(request, username):
         return JsonResponse({'exists': False})
 
 
-@api_view(['POST'])
-def update_user_progress(request, username):
+# @api_view(['POST'])
+# def update_user_progress(request, username):
     topic_id = request.data.get('topic_id')
     mistakes_count = request.data.get('mistakes', 0)
     duration = request.data.get('duration', 0)
@@ -58,7 +58,47 @@ def update_user_progress(request, username):
     except UserProgress.DoesNotExist:
         return Response({'message': 'User progress for this topic does not exist.'}, status=status.HTTP_404_NOT_FOUND)
     
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Mistake, UserProgress, User
 
+@api_view(['POST'])
+def update_user_progress(request, username):
+    topic_id = request.data.get('topic_id')
+    mistakes_count = request.data.get('mistakes', 0)
+    duration = request.data.get('duration', 0)
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+
+    try:
+        # Fetch user progress for the given topic
+        user_progress = UserProgress.objects.get(user=user, topic_id=topic_id)
+
+        # Increment the user's level
+        user_progress.level += 1
+        user_progress.save()
+
+        # Prüfen, ob bereits ein Mistake-Eintrag existiert
+        mistake, created = Mistake.objects.update_or_create(
+            user_progress=user_progress,
+            level=user_progress.level,
+            defaults={'mistakes_count': mistakes_count, 'duration': duration}
+        )
+
+        return Response({
+            'message': 'Progress updated successfully.',
+            'level': user_progress.level,
+            'mistakes': mistake.mistakes_count,
+            'duration': mistake.duration
+        }, status=status.HTTP_200_OK)
+        
+    except UserProgress.DoesNotExist:
+        return Response({'message': 'User progress for this topic does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+    
 class WordListView(generics.ListAPIView):
     serializer_class = WordSerializer
 
