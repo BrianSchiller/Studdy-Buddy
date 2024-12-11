@@ -10,7 +10,6 @@ import { generateQuizQuestions, QuizQuestion } from "./quizUtils";
 import {
     MultipleChoice_Quiz,
     DashboardPanel,
-    NavigationFooter,
     StyledContainer,
     NextButtonWrapper,
 } from "./stylesQuizPage";
@@ -101,25 +100,29 @@ const QuizPage: React.FC = () => {
                     timer={timer}
                 />
                 <MultipleChoice_Quiz>
-                    {questions.length > 0 && (
-                        <MultipleChoice
-                            question={questions[currentIndex].question}
-                            image={questions[currentIndex].image || "https://placehold.co/95"}
-                            options={questions[currentIndex].options}
-                            onAnswerSelect={setAnswerSelected}
-                            selectedAnswer={answerSelected}
-                            correctAnswer={isCorrect === null ? null : questions[currentIndex].correctAnswer}
-                        />
+                    {loading ? (
+                        <Text size="20px" weight="bold">Loading Quiz...</Text>
+                    ) : (
+                        <>
+                            {questions.length > 0 && (
+                                <MultipleChoice
+                                    question={questions[currentIndex].question}
+                                    image={questions[currentIndex].image || "https://placehold.co/95"}
+                                    options={questions[currentIndex].options}
+                                    onAnswerSelect={setAnswerSelected}
+                                    selectedAnswer={answerSelected}
+                                    correctAnswer={isCorrect === null ? null : questions[currentIndex].correctAnswer}
+                                    hasChecked={buttonState !== "check"}
+                                />
+                            )}
+                            <NextButtonWrapper>
+                                <Button onClick={handleButtonClick} disabled={buttonState === "check" && !answerSelected}>
+                                    {buttonState === "check" ? "Check" : buttonState === "next" ? "Next" : "Finish"}
+                                </Button>
+                            </NextButtonWrapper>
+                        </>
                     )}
-                    <NextButtonWrapper>
-                        <Button onClick={handleButtonClick} disabled={buttonState === "check" && !answerSelected}>
-                            {buttonState === "check" ? "Check" : buttonState === "next" ? "Next" : "Finish"}
-                        </Button>
-                    </NextButtonWrapper>
                 </MultipleChoice_Quiz>
-                <NavigationFooter>
-                    <Button onClick={() => navigate("/welcome")}>Cancel Quiz</Button>
-                </NavigationFooter>
             </DashboardPanel>
         </StyledContainer>
     );

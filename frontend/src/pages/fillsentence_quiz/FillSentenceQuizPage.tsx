@@ -103,7 +103,6 @@ const FillSentenceQuizPage: React.FC = () => {
         } else {
             const mistakes = questions.length - score;
             try {
-                // Statischen Level auf 4 setzen, um Duplikate zu vermeiden
                 await updateUserProgress(username, topicId, mistakes, timer);
             } catch (error) {
                 console.error("Error updating progress:", error);
@@ -147,6 +146,7 @@ const FillSentenceQuizPage: React.FC = () => {
                             onClick={() => handleWordSelect(option)}
                             selected={option === selectedWord}
                             correct={isCorrect !== null && option === questions[currentIndex].correctAnswer}
+                            incorrect={isCorrect !== null && option === selectedWord && option !== questions[currentIndex].correctAnswer}
                         >
                             {option}
                         </StyledWordButton>

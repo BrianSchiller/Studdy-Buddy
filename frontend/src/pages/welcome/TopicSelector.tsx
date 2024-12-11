@@ -40,8 +40,14 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
             try {
                 const progressData = await getUserProgress(username);
                 const topicsData = await fetchTopics(username);
+
+                // Filter out the "Sports" category
+                const filteredTopics = topicsData.filter(
+                    (topic) => topic.topic_name.toLowerCase() !== "sports"
+                );
+
                 setUserProgress(progressData);
-                setTopics(topicsData);
+                setTopics(filteredTopics);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -54,7 +60,7 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
     // Prüfen, ob der Test heute gemacht wurde
     const isQuizTakenToday = (dateTaken: string | null | Record<string, any>): boolean => {
         if (!dateTaken || typeof dateTaken !== "string") return false;
-    
+
         try {
             const today = new Date().toISOString().split("T")[0];
             return dateTaken.startsWith(today);

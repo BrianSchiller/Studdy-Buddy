@@ -40,6 +40,7 @@ const WordPairQuizPage: React.FC = () => {
     const [currentSetIndex, setCurrentSetIndex] = useState<number>(0);
     const pairsPerSet = 5;
     const [isPicturePhase, setIsPicturePhase] = useState<boolean>(false);
+    const [shake, setShake] = useState<boolean>(false);
 
     useEffect(() => {
         const initializeQuiz = async () => {
@@ -103,6 +104,8 @@ const WordPairQuizPage: React.FC = () => {
                 setShuffledSpanish((prev) => prev.filter((word) => word.id !== spanishWord.id));
             } else {
                 setMistakes((prev) => prev + 1);
+                setShake(true);
+                setTimeout(() => setShake(false), 500);
             }
 
             setSelectedEnglish(null);
@@ -159,6 +162,7 @@ const WordPairQuizPage: React.FC = () => {
                                 <ImageCard
                                     key={`image-${word.id}`}
                                     selected={selectedEnglish === word.id}
+                                    shake={shake}
                                     onClick={() => handleWordClick(word.id, "english")}
                                 >
                                     <img src={word.picture} alt={word.english} />
@@ -167,6 +171,7 @@ const WordPairQuizPage: React.FC = () => {
                                 <WordCard
                                     key={`english-${word.id}`}
                                     selected={selectedEnglish === word.id}
+                                    shake={shake}
                                     onClick={() => handleWordClick(word.id, "english")}
                                 >
                                     {word.english}
@@ -186,6 +191,7 @@ const WordPairQuizPage: React.FC = () => {
                             <WordCard
                                 key={`spanish-${word.id}`}
                                 selected={selectedSpanish === word.id}
+                                shake={shake}
                                 onClick={() => handleWordClick(word.id, "spanish")}
                             >
                                 {word.spanish}

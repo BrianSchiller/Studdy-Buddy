@@ -1,61 +1,107 @@
-/* ListPage.css */
-
 /* Container styles */
 .welcome-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
     text-align: center;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.welcome-container:hover {
+    transform: translateY(-5px);
 }
 
 /* Header styles */
 .welcome-container h1 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 10px;
-    font-weight: bold;
+    font-size: 28px;
+    color: #222;
+    margin-bottom: 15px;
+    font-weight: 700;
 }
 
-/* Paragraph styles */
+/* Description paragraph */
 .welcome-container p {
     font-size: 18px;
-    color: #666;
-    margin-bottom: 20px;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* Subheading for the word list */
+.welcome-container h2 {
+    font-size: 22px;
+    color: #007bff;
+    margin-bottom: 15px;
 }
 
 /* List styles */
 .welcome-container ul {
     list-style-type: none;
     padding: 0;
-    margin: 0;
+    margin-bottom: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden; /* Verhindert die horizontale Scrollleiste */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+/* Scrollbar styling for the list */
+.welcome-container ul::-webkit-scrollbar {
+    width: 8px;
+}
+
+.welcome-container ul::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 8px;
+}
+
+.welcome-container ul::-webkit-scrollbar-thumb {
+    background: #007bff;
+    border-radius: 8px;
 }
 
 .welcome-container li {
     font-size: 18px;
-    color: #444;
-    padding: 10px;
-    background-color: #e6f7ff;
-    border: 1px solid #b3e0ff;
-    border-radius: 5px;
+    color: #333;
+    padding: 12px 20px;
     margin: 5px 0;
+    background-color: #e6f7ff;
+    border-bottom: 1px solid #d1ecf1;
+    transition: background-color 0.3s, transform 0.2s;
+    border-radius: 5px;
+}
+
+.welcome-container li:hover {
+    background-color: #d1ecf1;
+    transform: translateX(5px);
 }
 
 /* Button styles */
 .welcome-container button {
     font-size: 18px;
-    padding: 10px 20px;
+    padding: 12px 25px;
     color: #fff;
     background-color: #007bff;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
 .welcome-container button:hover {
     background-color: #0056b3;
+    transform: translateY(-3px);
+}
+
+.welcome-container button:active {
+    transform: translateY(1px);
 }
