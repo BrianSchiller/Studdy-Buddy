@@ -94,6 +94,8 @@ class TopicListView(APIView):
             max_date = mistake['max_date']
             mistake_map[topic_id] = max_date
 
+        exam_results = ExamResult.objects.filter(user=user).values_list('exam__topic_id', flat=True)
+
         # Prepare the response data
         topics_data = []
         for topic in topics:
@@ -107,12 +109,15 @@ class TopicListView(APIView):
             else:
                 date_taken = mistake_map.get(topic.id, {})
 
+            exam_taken = topic.id in exam_results
+
             # Add topic data to the response list
             topics_data.append({
                 'topic_id': topic.id,
                 'topic_name': topic.name,
                 'style': style_map.get(topic.id, None),  # Get the style if assigned, else None
                 'date_taken': date_taken,
+                'exam_taken': exam_taken
             })
 
         return Response(topics_data, status=status.HTTP_200_OK)
