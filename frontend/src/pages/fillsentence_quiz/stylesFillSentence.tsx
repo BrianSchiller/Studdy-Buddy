@@ -34,20 +34,20 @@ export const WordOptionsContainer = styled.div`
     align-items: center;
 `;
 
-export const StyledWordButton = styled.button<{ selected?: boolean; correct?: boolean }>`
+export const StyledWordButton = styled.button<{ selected?: boolean; correct?: boolean; incorrect?: boolean }>`
     padding: 10px 20px;
     font-size: 16px;
     border-radius: 5px;
     border: none;
     cursor: pointer;
-    background-color: ${({ selected, correct }) =>
-        correct ? "green" : selected ? "#2196F3" : "white"};
+    background-color: ${({ correct, incorrect, selected }) =>
+        correct ? "green" : incorrect ? "#F44336" : selected ? "#2196F3" : "white"};
     color: ${({ correct }) => (correct ? "white" : "black")};
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
 
     &:hover {
-        background-color: ${({ selected, correct }) =>
-            correct ? "darkgreen" : selected ? "#1976D2" : "#f0f0f0"};
+        background-color: ${({ selected, correct, incorrect }) =>
+            correct ? "darkgreen" : incorrect ? "#D32F2F" : selected ? "#1976D2" : "#f0f0f0"};
     }
 
     transition: background-color 0.3s ease-in-out;

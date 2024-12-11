@@ -1,99 +1,130 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
-import { CardBox } from "./styles";
+import styled from "styled-components";
+import { getUserProgress, fetchTopics } from "../../api";
 
 interface TopicSelectorProps {
-    username: string; // Passed from the parent component
+    username: string;
 }
+
+interface UserProgress {
+    topic_id: number;
+    topic: string;
+    level: number;
+}
+
+interface Topic {
+    topic_id: number;
+    topic_name: string;
+    style: string | null;
+    date_taken: string | null;
+}
+
+// Styled Component für eine deaktivierte Karte
+const DisabledCard = styled(Card)`
+    background-color: #f0f0f0;
+    pointer-events: none;
+    opacity: 0.6;
+`;
 
 const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
     const navigate = useNavigate();
+    const [userProgress, setUserProgress] = useState<UserProgress[]>([]);
+    const [topics, setTopics] = useState<Topic[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    // Navigate to ListPage with topic-specific data
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const progressData = await getUserProgress(username);
+                const topicsData = await fetchTopics(username);
+
+                // Filter out the "Sports" category
+                const filteredTopics = topicsData.filter(
+                    (topic) => topic.topic_name.toLowerCase() !== "sports"
+                );
+
+                setUserProgress(progressData);
+                setTopics(filteredTopics);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [username]);
+
+    // Prüfen, ob der Test heute gemacht wurde
+    const isQuizTakenToday = (dateTaken: string | null | Record<string, any>): boolean => {
+        if (!dateTaken || typeof dateTaken !== "string") return false;
+
+        try {
+            const today = new Date().toISOString().split("T")[0];
+            return dateTaken.startsWith(today);
+        } catch (error) {
+            console.error("Error parsing dateTaken:", error);
+            return false;
+        }
+    };
+
     const handleTopicSelection = (topicId: number, title: string, description: string) => {
         navigate("/list", {
-            state: { 
-                username, 
-                topicId, 
-                title, 
-                description 
-            },
+            state: { username, topicId, title, description },
         });
     };
 
+    const handleTakeExam = (topicId: number) => {
+        navigate(`/exam/${topicId}`, { state: { username, topicId } });
+    };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
     return (
-        <CardBox>
-            {/* Topic: Verduras y Frutas */}
-            <Card radius width="40%">
-                <h3>Verduras y Frutas</h3>
-                <img src="https://placehold.co/100" alt="Fruits and Vegetables" />
-                <Button 
-                    onClick={() => 
-                        handleTopicSelection(
-                            1, 
-                            "Learn Fruits and Vegetables", 
-                            "Get to know different fruits and vegetables with this list."
-                        )
-                    }
-                >
-                    Start
-                </Button>
-            </Card>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
+            {topics.map((topic) => {
+                const progress = userProgress.find((p) => p.topic_id === topic.topic_id);
+                const isLevel4 = progress?.level === 4;
+                const quizTakenToday = isQuizTakenToday(topic.date_taken);
 
+                return (
+                    <Card radius width="40%" key={topic.topic_id}>
+                        <h3>{topic.topic_name}</h3>
+                        <img src="https://placehold.co/100" alt={topic.topic_name} />
 
-            {/* Topic: Vacaciones */}
-            <Card radius width="40%">
-                <h3>Vacaciones</h3>
-                <img src="https://placehold.co/100" alt="Vacation Words" />
-                <Button 
-                    onClick={() => 
-                        handleTopicSelection(
-                            2, 
-                            "Learn Vacation Words", 
-                            "Prepare for your next vacation with these useful words."
-                        )
-                    }
-                >
-                    Start
-                </Button>
-            </Card>
+                        {/* Start Button */}
+                        <Button
+                            onClick={() =>
+                                handleTopicSelection(
+                                    topic.topic_id,
+                                    `Learn ${topic.topic_name}`,
+                                    `Get to know about ${topic.topic_name} with this list.`
+                                )
+                            }
+                            disabled={isLevel4 || quizTakenToday}
+                        >
+                            {isLevel4
+                                ? "Level 4 Achieved"
+                                : quizTakenToday
+                                ? "Start Disabled (Completed Today)"
+                                : "Start"}
+                        </Button>
 
-            {/* Topic: Profesiones  */}
-            <Card radius width="40%">
-                <h3>Profesiones</h3>
-                <img src="https://placehold.co/100" alt="Profesiones Words" />
-                <Button 
-                    onClick={() => 
-                        handleTopicSelection(
-                            3, 
-                            "Learn Profession Words", 
-                            "Prepare for your next profession with these useful words."
-                        )
-                    }
-                >
-                    Start
-                </Button>
-            </Card>
-
-            {/* Topic: Animales */}
-            <Card radius width="40%">
-                <h3>Animales</h3>
-                <img src="https://placehold.co/100" alt="Animals" />
-                <Button 
-                    onClick={() => 
-                        handleTopicSelection(
-                            4, 
-                            "Learn Animals", 
-                            "Learn the names of various animals in Spanish and English."
-                        )
-                    }
-                >
-                    Start
-                </Button>
-            </Card>
-        </CardBox>
+                        {/* Take Exam Button */}
+                        <Button
+                            onClick={() => handleTakeExam(topic.topic_id)}
+                            disabled={!isLevel4}
+                        >
+                            {isLevel4 ? "Take Exam" : "Exam Locked"}
+                        </Button>
+                    </Card>
+                );
+            })}
+        </div>
     );
 };
 

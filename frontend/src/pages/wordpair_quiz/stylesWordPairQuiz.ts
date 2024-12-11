@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 export const StyledContainer = styled.div`
     display: flex;
@@ -59,7 +59,17 @@ export const WordGrid = styled.div`
     width: 45%;
 `;
 
-export const WordCard = styled.div<{ selected?: boolean }>`
+// Wackel-Animation definieren
+const shakeAnimation = keyframes`
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+`;
+
+// WordCard mit Shake-Animation
+export const WordCard = styled.div<{ selected?: boolean; shake?: boolean }>`
     padding: 15px;
     font-size: 18px;
     background-color: ${({ selected }) => (selected ? "#2196F3" : "#f5f5f5")};
@@ -69,15 +79,20 @@ export const WordCard = styled.div<{ selected?: boolean }>`
     text-align: center;
     cursor: pointer;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+
+    ${({ shake }) =>
+        shake &&
+        css`
+            animation: ${shakeAnimation} 0.3s ease-in-out;
+        `}
 
     &:hover {
         background-color: ${({ selected }) => (selected ? "#1976D2" : "#e0e0e0")};
     }
-
-    transition: all 0.3s ease;
 `;
 
-export const ImageCard = styled.div<{ selected?: boolean }>`
+export const ImageCard = styled.div<{ selected?: boolean; shake?: boolean}>`
     padding: 10px;
     background-color: ${({ selected }) => (selected ? "#2196F3" : "#f5f5f5")};
     border: 1px solid ${({ selected }) => (selected ? "#1976D2" : "#ddd")};
@@ -94,6 +109,12 @@ export const ImageCard = styled.div<{ selected?: boolean }>`
         height: 80px;
         border-radius: 8px;
     }
+
+    ${({ shake }) =>
+        shake &&
+        css`
+            animation: ${shakeAnimation} 0.3s ease-in-out;
+        `}
 
     &:hover {
         background-color: ${({ selected }) => (selected ? "#1976D2" : "#e0e0e0")};
@@ -119,3 +140,5 @@ export const FlagHeader = styled.div`
         border-radius: 5px; /* Optional: Rounded corners for the flag */
     }
 `;
+
+
