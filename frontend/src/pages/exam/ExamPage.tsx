@@ -8,6 +8,8 @@ import {
     RecipeContainer,
     RecipeTitle,
     RecipeText,
+    AnimalContainer,
+    AnimalTable,
     QuestionContainer,
     QuestionText,
     InputField,
@@ -127,10 +129,29 @@ const ExamPage: React.FC = () => {
                 <ExamTitle>{examData?.exam_text}</ExamTitle>
                 <ExamTimer>Elapsed Time: {formatTime(timer)}</ExamTimer>
             </ExamHeader>
-            <RecipeContainer>
-                <RecipeTitle>Recipe:</RecipeTitle>
-                <RecipeText>{currentQuestion?.text.split("\r\n").map((line, i) => <p key={i}>{line}</p>)}</RecipeText>
-            </RecipeContainer>
+
+            {topicId === 4 ? (
+                // Custom Design for Animals (topicId: 4)
+                <AnimalContainer>
+                    <RecipeTitle>Animal Weights</RecipeTitle>
+                    <AnimalTable>
+                        {currentQuestion?.text.split("\r\n").map((line, i) => (
+                            <p key={i}>{line}</p>
+                        ))}
+                    </AnimalTable>
+                </AnimalContainer>
+            ) : (
+                // Standard Design for Recipes
+                <RecipeContainer>
+                    <RecipeTitle>Recipe:</RecipeTitle>
+                    <RecipeText>
+                        {currentQuestion?.text.split("\r\n").map((line, i) => (
+                            <p key={i}>{line}</p>
+                        ))}
+                    </RecipeText>
+                </RecipeContainer>
+            )}
+
             <QuestionContainer>
                 <QuestionText>{currentQuestion?.question}</QuestionText>
                 <InputField

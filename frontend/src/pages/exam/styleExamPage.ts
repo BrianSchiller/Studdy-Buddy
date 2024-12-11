@@ -125,3 +125,21 @@ export const SubmitButton = styled.button`
         cursor: not-allowed;
     }
 `;
+
+// Container for displaying animal weights
+export const AnimalContainer = styled.div`
+    background-color: #f0f9ff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+// Table-like structure for animal weights
+export const AnimalTable = styled.div`
+    font-family: monospace;
+    white-space: pre-line;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+`;

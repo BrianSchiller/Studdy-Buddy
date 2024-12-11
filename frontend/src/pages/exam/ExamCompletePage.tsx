@@ -101,7 +101,7 @@ const ExamCompletePage: React.FC = () => {
                     </tbody>
                 </StyledTable>
                 <ButtonWrapper>
-                    <Button onClick={handleGoHome}>Go Back to Home</Button>
+                    <Button onClick={handleGoHome}>Home</Button>
                 </ButtonWrapper>
             </ResultsPanel>
         </StyledContainer>
