@@ -7,7 +7,6 @@ export const StyledCard = styled.div`
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
 `;
 
 // Date Card for displaying the current date
@@ -17,5 +16,4 @@ export const DateCard = styled.div`
     border-radius: 10px;
     text-align: center;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
 `;

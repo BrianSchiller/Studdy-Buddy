@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card } from "../../components/Card";
+// import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
 import styled from "styled-components";
 import { getUserProgress, fetchTopics } from "../../api";
@@ -23,12 +23,57 @@ interface Topic {
     exam_taken: boolean; // Added exam_taken field
 }
 
-// Styled Component für eine deaktivierte Karte
-const DisabledCard = styled(Card)`
-    background-color: #f0f0f0;
-    pointer-events: none;
-    opacity: 0.6;
+const TopicsContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    max-height: 80vh; /* Limits height to make it scrollable */
+    overflow-y: auto; /* Enables vertical scrolling if needed */
+    padding: 16px;
+    box-sizing: border-box;
 `;
+
+const StyledCard = styled.div`
+    flex: 1 1 calc(33.333% - 16px);
+    max-width: calc(33.333% - 16px);
+    box-sizing: border-box;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+
+    img {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 8px;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+        margin: 0 0 8px;
+    }
+
+    button {
+        margin-top: 8px;
+    }
+
+    @media (max-width: 1279px) {
+        flex: 1 1 calc(50% - 16px);
+        max-width: calc(50% - 16px);
+    }
+
+    @media (max-width: 768px) {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+`;
+
+// Styled Component für eine deaktivierte Karte
+// const DisabledCard = styled(Card)`
+//     background-color: #f0f0f0;
+//     pointer-events: none;
+//     opacity: 0.6;
+// `;
 
 const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
     const navigate = useNavigate();
@@ -85,7 +130,7 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
     }
 
     return (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
+        <TopicsContainer>
             {topics.map((topic) => {
                 const progress = userProgress.find((p) => p.topic_id === topic.topic_id);
                 const isLevel4 = progress?.level === 4;
@@ -93,7 +138,7 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
                 const examAlreadyTaken = topic.exam_taken;
 
                 return (
-                    <Card radius width="40%" key={topic.topic_id}>
+                    <StyledCard key={topic.topic_id}>
                         <h3>{topic.topic_name}</h3>
                         <img src="https://placehold.co/100" alt={topic.topic_name} />
 
@@ -126,10 +171,10 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
                                 ? "Take Exam"
                                 : "Exam Locked"}
                         </Button>
-                    </Card>
+                    </StyledCard>
                 );
             })}
-        </div>
+        </TopicsContainer>
     );
 };
 

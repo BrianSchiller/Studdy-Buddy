@@ -38,7 +38,12 @@ export const DashboardPanel = styled.div`
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
+    overflow: auto;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        overflow: hidden;
+    }
 `;
 
 // Right panel with better spacing and shadow
@@ -46,13 +51,13 @@ export const DashboardRight = styled.div`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 40%;
     padding: 20px;
     background-color: #f9fafb;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
     max-height: 80vh;
+    width: 40%;
 
     ul {
         list-style-type: none;
@@ -72,6 +77,10 @@ export const DashboardRight = styled.div`
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
     }
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 // Left panel with increased gap
@@ -80,6 +89,10 @@ export const DashboardLeft = styled.div`
     flex-direction: column;
     gap: 30px;
     width: 60%;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
 `;
 
 // CardBox with responsive design

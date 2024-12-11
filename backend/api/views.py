@@ -13,7 +13,7 @@ from django.db.models import Max
 
 def check_user_exists(request, username):
     try:
-        user = User.objects.get(username=username)  # Check if the user exists
+        user = User.objects.get(username=username) 
         # Check if styles have been assigned for this user
         if not ExperimentGroup.objects.filter(user=user).exists():
             assign_topics_and_styles_balanced(user)  # Assign topics and styles if not assigned
@@ -22,46 +22,49 @@ def check_user_exists(request, username):
     except User.DoesNotExist:
         return JsonResponse({'exists': False})
 
+def assign_topics_and_styles_balanced(user):
+    styles = ['B', 'I', 'S']
+    topics = Topic.objects.all()[:3]  # Select the first three topics
 
-# @api_view(['POST'])
-# def update_user_progress(request, username):
-    topic_id = request.data.get('topic_id')
-    mistakes_count = request.data.get('mistakes', 0)
-    duration = request.data.get('duration', 0)
+    # Initialize style counters for each topic
+    style_counts = {
+        topic.id: Counter({'B': 0, 'I': 0, 'S': 0})
+        for topic in topics
+    }
 
-    try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        return Response({'error': 'User not found'}, status=404)
+    # Count current style assignments for each topic globally
+    experiment_groups = ExperimentGroup.objects.all()
+    for group in experiment_groups:
+        style_counts[group.topic.id][group.presentation_style] += 1
 
-    try:
-        # Fetch user progress for the given topic
-        user_progress = UserProgress.objects.get(user=user, topic_id=topic_id)
+    assigned_styles = set()  # Track styles already assigned to the user
 
-        # Increment the user's level
-        user_progress.level += 1
-        user_progress.save()
+    with transaction.atomic():  # Ensure atomicity of database changes
+        for topic in topics:
+            # Update style counts dynamically to reflect current assignments
+            available_styles = [style for style in styles if style not in assigned_styles]
 
-        mistake = Mistake.objects.create(
-            user_progress=user_progress,
-            level=user_progress.level,
-            mistakes_count=mistakes_count,
-            duration = duration
-        )
+            # Select the least used style globally from the available ones
+            least_assigned_style = min(
+                available_styles,
+                key=lambda style: style_counts[topic.id][style]
+            )
 
-        return Response({
-            'message': 'Progress updated successfully.',
-            'level': user_progress.level,
-            'mistakes': mistake.mistakes_count,
-            'duration': mistake.duration
-        }, status=status.HTTP_200_OK)
-    except UserProgress.DoesNotExist:
-        return Response({'message': 'User progress for this topic does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-    
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Mistake, UserProgress, User
+            # Assign the selected style and topic to the user
+            ExperimentGroup.objects.create(
+                user=user,
+                topic=topic,
+                presentation_style=least_assigned_style
+            )
+
+            # Create user progress for the topic if not already created
+            UserProgress.objects.get_or_create(
+                user=user,
+                topic=topic,
+                defaults={'level': 1}
+            )
+
+            assigned_styles.add(least_assigned_style)
 
 @api_view(['POST'])
 def update_user_progress(request, username):
@@ -189,51 +192,6 @@ class UserProgressListView(APIView):
         ]
 
         return Response(progress_data)
-    
-
-def assign_topics_and_styles_balanced(user):
-    styles = ['B', 'I', 'S']
-    topics = Topic.objects.all()[:3]  # Select the first three topics
-
-    # Initialize style counters for each topic
-    style_counts = {
-        topic.id: Counter({'B': 0, 'I': 0, 'S': 0})
-        for topic in topics
-    }
-
-    # Count current style assignments for each topic globally
-    experiment_groups = ExperimentGroup.objects.all()
-    for group in experiment_groups:
-        style_counts[group.topic.id][group.presentation_style] += 1
-
-    assigned_styles = set()  # Track styles already assigned to the user
-
-    with transaction.atomic():  # Ensure atomicity of database changes
-        for topic in topics:
-            # Update style counts dynamically to reflect current assignments
-            available_styles = [style for style in styles if style not in assigned_styles]
-
-            # Select the least used style globally from the available ones
-            least_assigned_style = min(
-                available_styles,
-                key=lambda style: style_counts[topic.id][style]
-            )
-
-            # Assign the selected style and topic to the user
-            ExperimentGroup.objects.create(
-                user=user,
-                topic=topic,
-                presentation_style=least_assigned_style
-            )
-
-            # Create user progress for the topic if not already created
-            UserProgress.objects.get_or_create(
-                user=user,
-                topic=topic,
-                defaults={'level': 1}
-            )
-
-            assigned_styles.add(least_assigned_style)
 
 
 @api_view(['GET'])
