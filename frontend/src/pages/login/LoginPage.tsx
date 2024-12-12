@@ -9,7 +9,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async () => {
     try {
         const response = await fetch(
-            `http://localhost:8000/api/login/${username}/`
+            `https://studdy-buddy-r27q.onrender.com/api/login/${username}/`
         );
         const data = await response.json();
 

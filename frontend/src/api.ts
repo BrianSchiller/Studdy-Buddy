@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { VocabWord } from './interfaces';
 
-const BASE_API_URL = 'http://localhost:8000/api';
+const BASE_API_URL = 'https://studdy-buddy-r27q.onrender.com/api';
 
 // Fetch vocab words from the updated API
 export const fetchVocabWords = async (topicId: number): Promise<VocabWord[]> => {
