@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
 from .views import check_user_exists, update_user_progress, get_random_words, WordListView, UserProgressListView, TopicListView, get_exam, submit_exam
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('login/<str:username>/', check_user_exists, name='login'),
@@ -13,3 +14,6 @@ urlpatterns = [
     path('exam/<int:topic_id>/', get_exam, name='get_exam'),
     path('submit_exam/<int:exam_id>/<str:username>/', submit_exam, name='submit_exam'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
