@@ -57,7 +57,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://studdy-buddy-pi.vercel.app/",
+    "https://studdy-buddy-pi.vercel.app",
 ]
 
 ROOT_URLCONF = "buddy.urls"

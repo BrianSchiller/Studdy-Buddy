@@ -209,7 +209,6 @@ def get_random_words(request, amount):
             'id': word.id,
             'spanish': word.spanish,
             'english': word.english,
-            'image': word.image.url if word.image else None,  # Ensure we handle cases where there's no image
             'sentence': word.sentence,
         }
         for word in random_words

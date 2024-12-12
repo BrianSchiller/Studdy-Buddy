@@ -18,7 +18,6 @@ class Word(models.Model):
     topic = models.ForeignKey(Topic, related_name='words', on_delete=models.CASCADE)
     spanish = models.CharField(max_length=100)
     english = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='images/')
     sentence = models.TextField()
 
     def __str__(self):
