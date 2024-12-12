@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-&#ah#jevk_ec0hz7@2+!b$$)on@@duyv)vzn_vc#@0ao^$l*2t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['your-render-domain.onrender.com']
+ALLOWED_HOSTS = ['https://studdy-buddy-r27q.onrender.com']
 
 
 # Application definition
@@ -133,3 +133,21 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
