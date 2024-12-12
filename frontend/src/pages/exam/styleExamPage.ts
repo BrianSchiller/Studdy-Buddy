@@ -143,3 +143,21 @@ export const AnimalTable = styled.div`
     font-size: 16px;
     line-height: 1.6;
 `;
+
+// Container for displaying job salaries
+export const JobContainer = styled.div`
+    background-color: #fff7e6;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+// Table-like structure for job salaries
+export const JobTable = styled.div`
+    font-family: monospace;
+    white-space: pre-line;
+    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+`;

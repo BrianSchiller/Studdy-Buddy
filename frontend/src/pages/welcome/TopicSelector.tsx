@@ -20,6 +20,7 @@ interface Topic {
     topic_name: string;
     style: string | null;
     date_taken: string | null;
+    exam_taken: boolean; // Added exam_taken field
 }
 
 const TopicsContainer = styled.div`
@@ -102,7 +103,6 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
         fetchData();
     }, [username]);
 
-    // Prüfen, ob der Test heute gemacht wurde
     const isQuizTakenToday = (dateTaken: string | null | Record<string, any>): boolean => {
         if (!dateTaken || typeof dateTaken !== "string") return false;
 
@@ -135,6 +135,7 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
                 const progress = userProgress.find((p) => p.topic_id === topic.topic_id);
                 const isLevel4 = progress?.level === 4;
                 const quizTakenToday = isQuizTakenToday(topic.date_taken);
+                const examAlreadyTaken = topic.exam_taken;
 
                 return (
                     <StyledCard key={topic.topic_id}>
@@ -162,9 +163,13 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
                         {/* Take Exam Button */}
                         <Button
                             onClick={() => handleTakeExam(topic.topic_id)}
-                            disabled={!isLevel4}
+                            disabled={!isLevel4 || examAlreadyTaken}
                         >
-                            {isLevel4 ? "Take Exam" : "Exam Locked"}
+                            {examAlreadyTaken
+                                ? "Exam Completed"
+                                : isLevel4
+                                ? "Take Exam"
+                                : "Exam Locked"}
                         </Button>
                     </StyledCard>
                 );
