@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
 class WordSerializer(serializers.ModelSerializer):
     class Meta:
         model = Word
-        fields = ['id', 'spanish', 'english', 'image', 'sentence']
+        fields = ['id', 'spanish', 'english', 'sentence']
 
 class TopicSerializer(serializers.ModelSerializer):
     class Meta:
