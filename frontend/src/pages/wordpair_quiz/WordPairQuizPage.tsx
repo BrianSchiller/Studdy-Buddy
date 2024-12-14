@@ -165,7 +165,7 @@ const WordPairQuizPage: React.FC = () => {
                                     shake={shake}
                                     onClick={() => handleWordClick(word.id, "english")}
                                 >
-                                    <img src={`https://res.cloudinary.com/dv6fapgis/image/upload/v1734004745/${word.english}.png`} alt={word.english} />
+                                    <img src={word.picture} alt={word.english} />
                                 </ImageCard>
                             ) : (
                                 <WordCard

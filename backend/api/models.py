@@ -19,6 +19,7 @@ class Word(models.Model):
     spanish = models.CharField(max_length=100)
     english = models.CharField(max_length=100)
     sentence = models.TextField()
+    image = models.TextField(default="missing")
 
     def __str__(self):
         return f"{self.spanish} - {self.english}"
