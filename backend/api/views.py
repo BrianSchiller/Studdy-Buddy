@@ -61,7 +61,7 @@ def assign_topics_and_styles_balanced(user):
             UserProgress.objects.get_or_create(
                 user=user,
                 topic=topic,
-                defaults={'level': 1}
+                defaults={'level': 0}
             )
 
             assigned_styles.add(least_assigned_style)
