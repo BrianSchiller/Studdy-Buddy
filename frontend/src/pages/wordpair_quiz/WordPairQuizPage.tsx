@@ -53,7 +53,7 @@ const WordPairQuizPage: React.FC = () => {
                 english: word.english,
                 spanish: word.spanish,
                 matched: false,
-                picture: `https://placehold.co/100x100?text=Image+${index + 1}`,
+                picture: word.image,
             }));
 
             setWords(wordPairs);
