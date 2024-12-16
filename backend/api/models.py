@@ -28,7 +28,7 @@ class Word(models.Model):
 class UserProgress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
-    level = models.IntegerField(default=1)
+    level = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ('user', 'topic')
