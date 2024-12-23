@@ -98,7 +98,6 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
             try {
                 const progressData = await getUserProgress(username);
                 const topicsData = await fetchTopics(username);
-
                 setUserProgress(progressData);
                 setTopics(topicsData);
             } catch (error) {
@@ -110,14 +109,8 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
         fetchData();
     }, [username]);
 
-    const isQuizTakenToday = (dateTaken: string | null): boolean => {
-        if (!dateTaken) return false;
-        const today = new Date().toISOString().split("T")[0];
-        return dateTaken.startsWith(today);
-    };
-
-    const handleTopicSelection = (topicId: number, title: string, description: string) => {
-        navigate("/list", { state: { username, topicId, title, description } });
+    const handleTopicSelection = (topicId: number) => {
+        navigate("/list", { state: { username, topicId } });
     };
 
     const handleTakeExam = (topicId: number) => {
@@ -130,7 +123,6 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
 
     return (
         <>
-            {/* Display Icons for Categories */}
             <HeaderIconsContainer>
                 {["animals", "jobs", "fruits"].map((topic) => (
                     <img
@@ -141,50 +133,22 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
                 ))}
             </HeaderIconsContainer>
 
-            {/* Render Topics */}
             <TopicsContainer>
-                {topics.map((topic) => {
-                    const progress = userProgress.find((p) => p.topic_id === topic.topic_id);
-                    const isLevel4 = progress?.level === 4;
-                    const quizTakenToday = isQuizTakenToday(topic.date_taken);
-                    const examAlreadyTaken = topic.exam_taken;
-
-                    return (
-                        <StyledCard key={topic.topic_id}>
-                            <h3>{topic.topic_name}</h3>
-                            <img
-                                src={topicIcons[topic.topic_name.toLowerCase()] || ""}
-                                alt={topic.topic_name}
-                            />
-                            <Button
-                                onClick={() =>
-                                    handleTopicSelection(
-                                        topic.topic_id,
-                                        `Learn ${topic.topic_name}`,
-                                        `Get to know about ${topic.topic_name} with this list.`
-                                    )
-                                }
-                                disabled={isLevel4 || quizTakenToday}
-                            >
-                                {isLevel4
-                                    ? "Level 4 Achieved"
-                                    : quizTakenToday
-                                    ? "Start Disabled (Completed Today)"
-                                    : "Start"}
-                            </Button>
-                            <Button
-                                onClick={() => handleTakeExam(topic.topic_id)}
-                                disabled={!isLevel4 || examAlreadyTaken}
-                            >
-                                {examAlreadyTaken
-                                    ? "Exam Completed"
-                                    : isLevel4
-                                    ? "Take Exam"
-                                    : "Exam Locked"}
-                            </Button>
-                        </StyledCard>
-                    );
-                })}
+                {topics.map((topic) => (
+                    <StyledCard key={topic.topic_id}>
+                        <h3>{topic.topic_name}</h3>
+                        <img
+                            src={topicIcons[topic.topic_name.toLowerCase()] || ""}
+                            alt={topic.topic_name}
+                        />
+                        <Button onClick={() => handleTopicSelection(topic.topic_id)}>
+                            Start
+                        </Button>
+                        <Button onClick={() => handleTakeExam(topic.topic_id)}>
+                            Take Exam
+                        </Button>
+                    </StyledCard>
+                ))}
             </TopicsContainer>
         </>
     );
