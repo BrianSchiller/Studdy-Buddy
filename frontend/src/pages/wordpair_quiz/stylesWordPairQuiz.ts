@@ -146,6 +146,7 @@ export const ImageCard = styled.div<{ selected?: boolean; shake?: boolean; image
     }
 `;
 
+
 export const FlagHeader = styled.div`
     display: flex;
     flex-direction: column;
