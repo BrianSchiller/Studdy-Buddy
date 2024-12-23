@@ -149,36 +149,35 @@ const WordPairQuizPage: React.FC = () => {
                     timer={timer}
                 />
                 <WordPairRow>
-                    <WordGrid>
-                        <FlagHeader>
-                            <img
-                                src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png"
-                                alt="English Flag"
-                            />
-                            English
-                        </FlagHeader>
-                        {shuffledEnglish.map((word) =>
-                            isPicturePhase ? (
-                                <ImageCard
-                                    key={`image-${word.id}`}
-                                    selected={selectedEnglish === word.id}
-                                    shake={shake}
-                                    imageUrl={word.picture} // Pass the image URL as a prop
-                                    onClick={() => handleWordClick(word.id, "english")}
-                                >
-                                </ImageCard>
-                            ) : (
-                                <WordCard
-                                    key={`english-${word.id}`}
-                                    selected={selectedEnglish === word.id}
-                                    shake={shake}
-                                    onClick={() => handleWordClick(word.id, "english")}
-                                >
-                                    {word.english}
-                                </WordCard>
-                            )
-                        )}
-                    </WordGrid>
+                <WordGrid>
+    <FlagHeader>
+        <img
+            src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png"
+            alt="English Flag"
+        />
+        English
+    </FlagHeader>
+    {shuffledEnglish.map((word) =>
+        isPicturePhase ? (
+            <ImageCard
+                key={`image-${word.id}`}
+                selected={selectedEnglish === word.id}
+                shake={shake}
+                imageUrl={word.picture}
+                onClick={() => handleWordClick(word.id, "english")}
+            />
+        ) : (
+            <WordCard
+                key={`english-${word.id}`}
+                selected={selectedEnglish === word.id}
+                shake={shake}
+                onClick={() => handleWordClick(word.id, "english")}
+            >
+                {word.english}
+            </WordCard>
+        )
+    )}
+</WordGrid>
                     <WordGrid>
                         <FlagHeader>
                             <img

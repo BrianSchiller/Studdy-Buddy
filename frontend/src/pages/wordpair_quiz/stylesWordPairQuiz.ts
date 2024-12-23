@@ -30,29 +30,6 @@ export const DashboardPanel = styled.div`
     }
 `;
 
-export const TimerDisplay = styled.div`
-    text-align: right;
-    margin-bottom: 10px;
-`;
-
-export const ProgressBar = styled.div<{ progress: number }>`
-    width: 100%;
-    height: 8px;
-    background-color: #ddd;
-    border-radius: 5px;
-    overflow: hidden;
-    margin: 10px 0;
-
-    &::after {
-        content: '';
-        display: block;
-        height: 100%;
-        width: ${({ progress }) => `${progress}%`};
-        background-color: #4caf50;
-        transition: width 0.3s ease-in-out;
-    }
-`;
-
 export const WordPairRow = styled.div`
     display: flex;
     justify-content: space-between;
@@ -60,32 +37,31 @@ export const WordPairRow = styled.div`
     width: 100%;
     gap: 20px;
 
-     @media (max-width: 768px) {
+    @media (max-width: 768px) {
         flex-direction: column;
     }
 `;
 
 export const WordGrid = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 45%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    width: 100%;
 
     @media (max-width: 768px) {
-        width: 100%;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     }
 `;
 
-// Wackel-Animation definieren
+// Animation for incorrect selection
 const shakeAnimation = keyframes`
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
 `;
 
-// WordCard mit Shake-Animation
 export const WordCard = styled.div<{ selected?: boolean; shake?: boolean }>`
     padding: 15px;
     font-size: 18px;
@@ -115,17 +91,15 @@ export const WordCard = styled.div<{ selected?: boolean; shake?: boolean }>`
 `;
 
 export const ImageCard = styled.div<{ selected?: boolean; shake?: boolean; imageUrl?: string }>`
-    width: 100px;
-    height: 100px;
-    background-color: ${({ selected }) => (selected ? "#2196F3" : "#f5f5f5")};
+    width: 150px;
+    height: 150px;
     background-image: url(${({ imageUrl }) => imageUrl});
     background-size: cover;
     background-position: center;
-    border: 1px solid ${({ selected }) => (selected ? "#1976D2" : "#ddd")};
-    border-radius: 8px;
-    text-align: center;
+    border: 2px solid ${({ selected }) => (selected ? "#2196F3" : "#ddd")};
+    border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 
     ${({ shake }) =>
         shake &&
@@ -134,39 +108,39 @@ export const ImageCard = styled.div<{ selected?: boolean; shake?: boolean; image
         `}
 
     &:hover {
-        background-color: ${({ selected }) => (selected ? "#1976D2" : "#e0e0e0")};
-        background-blend-mode: multiply;
+        transform: scale(1.05);
+        transition: transform 0.3s ease-in-out;
     }
 
-    transition: all 0.3s ease;
+    @media (max-width: 768px) {
+        width: 120px;
+        height: 120px;
+    }
 
     @media (max-width: 480px) {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
     }
 `;
-
 
 export const FlagHeader = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px; /* Space between the image and the text */
+    gap: 5px;
     font-size: 18px;
     font-weight: bold;
     text-align: center;
     margin-bottom: 10px;
     color: #333;
 
-    & img {
-        width: 40px; /* Adjust flag size */
+    img {
+        width: 40px;
         height: auto;
-        border-radius: 5px; /* Optional: Rounded corners for the flag */
+        border-radius: 5px;
 
-         @media (max-width: 480px) {
+        @media (max-width: 480px) {
             width: 30px;
         }
     }
 `;
-
-
