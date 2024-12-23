@@ -69,9 +69,9 @@ const StyledCard = styled.div`
 `;
 
 const topicIcons: Record<string, string> = {
-    animals: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Dog_Paw_Icon.png",
-    jobs: "https://upload.wikimedia.org/wikipedia/commons/9/93/Briefcase_icon.png",
-    fruits: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.png/768px-Red_Apple.png",
+    animals: "https://cdn-icons-png.flaticon.com/512/616/616408.png", // Paw print icon
+    jobs: "https://cdn-icons-png.flaticon.com/512/3064/3064219.png", // Briefcase icon
+    fruits: "https://cdn-icons-png.flaticon.com/512/415/415733.png", // Apple icon
 };
 
 // Styled Component für eine deaktivierte Karte
