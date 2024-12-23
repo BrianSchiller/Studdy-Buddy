@@ -70,7 +70,7 @@ const StyledCard = styled.div`
 
 const topicIcons: Record<string, string> = {
     animals: "https://cdn-icons-png.flaticon.com/512/616/616408.png", // Paw print icon
-    jobs: "https://cdn-icons-png.flaticon.com/512/3064/3064219.png", // Briefcase icon
+    jobs: "https://cdn-icons-png.flaticon.com/512/3135/3135768.png", // Briefcase icon
     fruits: "https://cdn-icons-png.flaticon.com/512/415/415733.png", // Apple icon
 };
 
