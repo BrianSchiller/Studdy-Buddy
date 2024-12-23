@@ -163,9 +163,9 @@ const WordPairQuizPage: React.FC = () => {
                                     key={`image-${word.id}`}
                                     selected={selectedEnglish === word.id}
                                     shake={shake}
+                                    imageUrl={word.picture} // Pass the image URL as a prop
                                     onClick={() => handleWordClick(word.id, "english")}
                                 >
-                                    <img src={word.picture} alt={word.english} />
                                 </ImageCard>
                             ) : (
                                 <WordCard

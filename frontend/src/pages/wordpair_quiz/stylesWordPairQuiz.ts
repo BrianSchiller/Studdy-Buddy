@@ -114,28 +114,18 @@ export const WordCard = styled.div<{ selected?: boolean; shake?: boolean }>`
     }
 `;
 
-export const ImageCard = styled.div<{ selected?: boolean; shake?: boolean}>`
-    padding: 10px;
+export const ImageCard = styled.div<{ selected?: boolean; shake?: boolean; imageUrl?: string }>`
+    width: 100px;
+    height: 100px;
     background-color: ${({ selected }) => (selected ? "#2196F3" : "#f5f5f5")};
+    background-image: url(${({ imageUrl }) => imageUrl});
+    background-size: cover;
+    background-position: center;
     border: 1px solid ${({ selected }) => (selected ? "#1976D2" : "#ddd")};
     border-radius: 8px;
     text-align: center;
     cursor: pointer;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    img {
-        width: 80px;
-        height: 80px;
-        border-radius: 8px;
-
-        @media (max-width: 480px) {
-            width: 60px;
-            height: 60px;
-        }
-    }
 
     ${({ shake }) =>
         shake &&
@@ -145,9 +135,15 @@ export const ImageCard = styled.div<{ selected?: boolean; shake?: boolean}>`
 
     &:hover {
         background-color: ${({ selected }) => (selected ? "#1976D2" : "#e0e0e0")};
+        background-blend-mode: multiply;
     }
 
     transition: all 0.3s ease;
+
+    @media (max-width: 480px) {
+        width: 80px;
+        height: 80px;
+    }
 `;
 
 export const FlagHeader = styled.div`
