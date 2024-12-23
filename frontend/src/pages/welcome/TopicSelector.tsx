@@ -68,6 +68,12 @@ const StyledCard = styled.div`
     }
 `;
 
+const topicIcons: Record<string, string> = {
+    animals: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Dog_Paw_Icon.png",
+    jobs: "https://upload.wikimedia.org/wikipedia/commons/9/93/Briefcase_icon.png",
+    fruits: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.png/768px-Red_Apple.png",
+};
+
 // Styled Component für eine deaktivierte Karte
 // const DisabledCard = styled(Card)`
 //     background-color: #f0f0f0;
@@ -140,7 +146,7 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
                 return (
                     <StyledCard key={topic.topic_id}>
                         <h3>{topic.topic_name}</h3>
-                        <img src="https://placehold.co/100" alt={topic.topic_name} />
+                        <img src={topicIcons[topic.topic_name.toLowerCase()] || ""} alt={topic.topic_name} />
 
                         {/* Start Button */}
                         <Button
