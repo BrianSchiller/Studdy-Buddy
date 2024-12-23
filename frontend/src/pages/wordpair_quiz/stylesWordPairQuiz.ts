@@ -85,23 +85,24 @@ const shakeAnimation = keyframes`
   100% { transform: translateX(0); }
 `;
 
-export const WordGridLeft = styled.div<{ isPicturePhase?: boolean }>`
+export const WordGridLeft = styled.div<{ isPicturePhase: boolean }>`
     display: ${({ isPicturePhase }) => (isPicturePhase ? "grid" : "flex")};
     grid-template-columns: ${({ isPicturePhase }) =>
         isPicturePhase ? "repeat(2, 1fr)" : "none"};
-    gap: 20px;
+    gap: ${({ isPicturePhase }) => (isPicturePhase ? "20px" : "15px")};
     width: 45%;
 
     @media (max-width: 768px) {
         width: 100%;
         grid-template-columns: ${({ isPicturePhase }) =>
             isPicturePhase ? "repeat(2, 1fr)" : "none"};
+        gap: 15px;
     }
 
     @media (max-width: 480px) {
         grid-template-columns: ${({ isPicturePhase }) =>
             isPicturePhase ? "repeat(2, 1fr)" : "none"};
-        gap: 15px;
+        gap: 10px;
     }
 `;
 
