@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+// import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
 import styled from "styled-components";
 import { getUserProgress, fetchTopics } from "../../api";
@@ -19,31 +20,17 @@ interface Topic {
     topic_name: string;
     style: string | null;
     date_taken: string | null;
-    exam_taken: boolean;
+    exam_taken: boolean; // Added exam_taken field
 }
 
 const TopicsContainer = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
-    max-height: 80vh;
-    overflow-y: auto;
+    max-height: 80vh; /* Limits height to make it scrollable */
+    overflow-y: auto; /* Enables vertical scrolling if needed */
     padding: 16px;
     box-sizing: border-box;
-`;
-
-const HeaderIconsContainer = styled.div`
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-
-    img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background-color: #f5f5f5;
-        padding: 10px;
-    }
 `;
 
 const StyledCard = styled.div`
@@ -81,11 +68,12 @@ const StyledCard = styled.div`
     }
 `;
 
-const topicIcons: Record<string, string> = {
-    animals: "https://path-to-animal-icon.png", // Replace with an actual animal icon URL
-    jobs: "https://path-to-jobs-icon.png", // Replace with an actual jobs icon URL
-    fruits: "https://path-to-fruits-icon.png", // Replace with an actual fruits icon URL
-};
+// Styled Component für eine deaktivierte Karte
+// const DisabledCard = styled(Card)`
+//     background-color: #f0f0f0;
+//     pointer-events: none;
+//     opacity: 0.6;
+// `;
 
 const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
     const navigate = useNavigate();
@@ -99,8 +87,13 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
                 const progressData = await getUserProgress(username);
                 const topicsData = await fetchTopics(username);
 
+                // Filter out the "Sports" category
+                const filteredTopics = topicsData.filter(
+                    (topic) => topic.topic_name.toLowerCase() !== "sports"
+                );
+
                 setUserProgress(progressData);
-                setTopics(topicsData);
+                setTopics(filteredTopics);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -110,14 +103,22 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
         fetchData();
     }, [username]);
 
-    const isQuizTakenToday = (dateTaken: string | null): boolean => {
-        if (!dateTaken) return false;
-        const today = new Date().toISOString().split("T")[0];
-        return dateTaken.startsWith(today);
+    const isQuizTakenToday = (dateTaken: string | null | Record<string, any>): boolean => {
+        if (!dateTaken || typeof dateTaken !== "string") return false;
+
+        try {
+            const today = new Date().toISOString().split("T")[0];
+            return dateTaken.startsWith(today);
+        } catch (error) {
+            console.error("Error parsing dateTaken:", error);
+            return false;
+        }
     };
 
     const handleTopicSelection = (topicId: number, title: string, description: string) => {
-        navigate("/list", { state: { username, topicId, title, description } });
+        navigate("/list", {
+            state: { username, topicId, title, description },
+        });
     };
 
     const handleTakeExam = (topicId: number) => {
@@ -129,64 +130,51 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
     }
 
     return (
-        <>
-            {/* Display Icons for Categories */}
-            <HeaderIconsContainer>
-                {["animals", "jobs", "fruits"].map((topic) => (
-                    <img
-                        key={topic}
-                        src={topicIcons[topic] || ""}
-                        alt={`${topic} icon`}
-                    />
-                ))}
-            </HeaderIconsContainer>
+        <TopicsContainer>
+            {topics.map((topic) => {
+                const progress = userProgress.find((p) => p.topic_id === topic.topic_id);
+                const isLevel4 = progress?.level === 4;
+                const quizTakenToday = isQuizTakenToday(topic.date_taken);
+                const examAlreadyTaken = topic.exam_taken;
 
-            {/* Render Topics */}
-            <TopicsContainer>
-                {topics.map((topic) => {
-                    const progress = userProgress.find((p) => p.topic_id === topic.topic_id);
-                    const isLevel4 = progress?.level === 4;
-                    const quizTakenToday = isQuizTakenToday(topic.date_taken);
-                    const examAlreadyTaken = topic.exam_taken;
+                return (
+                    <StyledCard key={topic.topic_id}>
+                        <h3>{topic.topic_name}</h3>
+                        <img src="https://placehold.co/100" alt={topic.topic_name} />
 
-                    return (
-                        <StyledCard key={topic.topic_id}>
-                            <h3>{topic.topic_name}</h3>
-                            <img
-                                src={topicIcons[topic.topic_name.toLowerCase()] || ""}
-                                alt={topic.topic_name}
-                            />
-                            <Button
-                                onClick={() =>
-                                    handleTopicSelection(
-                                        topic.topic_id,
-                                        `Learn ${topic.topic_name}`,
-                                        `Get to know about ${topic.topic_name} with this list.`
-                                    )
-                                }
-                                disabled={isLevel4 || quizTakenToday}
-                            >
-                                {isLevel4
-                                    ? "Level 4 Achieved"
-                                    : quizTakenToday
-                                    ? "Start Disabled (Completed Today)"
-                                    : "Start"}
-                            </Button>
-                            <Button
-                                onClick={() => handleTakeExam(topic.topic_id)}
-                                disabled={!isLevel4 || examAlreadyTaken}
-                            >
-                                {examAlreadyTaken
-                                    ? "Exam Completed"
-                                    : isLevel4
-                                    ? "Take Exam"
-                                    : "Exam Locked"}
-                            </Button>
-                        </StyledCard>
-                    );
-                })}
-            </TopicsContainer>
-        </>
+                        {/* Start Button */}
+                        <Button
+                            onClick={() =>
+                                handleTopicSelection(
+                                    topic.topic_id,
+                                    `Learn ${topic.topic_name}`,
+                                    `Get to know about ${topic.topic_name} with this list.`
+                                )
+                            }
+                            disabled={isLevel4 || quizTakenToday}
+                        >
+                            {isLevel4
+                                ? "Level 4 Achieved"
+                                : quizTakenToday
+                                ? "Start Disabled (Completed Today)"
+                                : "Start"}
+                        </Button>
+
+                        {/* Take Exam Button */}
+                        <Button
+                            onClick={() => handleTakeExam(topic.topic_id)}
+                            disabled={!isLevel4 || examAlreadyTaken}
+                        >
+                            {examAlreadyTaken
+                                ? "Exam Completed"
+                                : isLevel4
+                                ? "Take Exam"
+                                : "Exam Locked"}
+                        </Button>
+                    </StyledCard>
+                );
+            })}
+        </TopicsContainer>
     );
 };
 
