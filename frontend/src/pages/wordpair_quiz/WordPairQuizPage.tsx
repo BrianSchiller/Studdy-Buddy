@@ -5,6 +5,7 @@ import { Menu } from "../../components/Menu";
 import { shuffleArray } from "../../utils/shuffleArray";
 import { fetchVocabWords, updateUserProgress } from "../../api";
 import { NavigationHeader } from "../../components/NavigationHeader";
+import WordPairQuizComponent from "./WordPairQuizComponent";
 import {
     StyledContainer,
     DashboardPanel,
@@ -148,57 +149,15 @@ const WordPairQuizPage: React.FC = () => {
                     progress={(words.filter((word) => word.matched).length / words.length) * 100}
                     timer={timer}
                 />
-                <WordPairRow>
-                    <WordGrid>
-                        <FlagHeader>
-                            <img
-                                src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png"
-                                alt="English Flag"
-                            />
-                            English
-                        </FlagHeader>
-                        {shuffledEnglish.map((word) =>
-                            isPicturePhase ? (
-                                <ImageCard
-                                    key={`image-${word.id}`}
-                                    selected={selectedEnglish === word.id}
-                                    shake={shake}
-                                    onClick={() => handleWordClick(word.id, "english")}
-                                >
-                                    <img src={word.picture} alt={word.english} />
-                                </ImageCard>
-                            ) : (
-                                <WordCard
-                                    key={`english-${word.id}`}
-                                    selected={selectedEnglish === word.id}
-                                    shake={shake}
-                                    onClick={() => handleWordClick(word.id, "english")}
-                                >
-                                    {word.english}
-                                </WordCard>
-                            )
-                        )}
-                    </WordGrid>
-                    <WordGrid>
-                        <FlagHeader>
-                            <img
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Flag_of_Spain.svg/1200px-Flag_of_Spain.svg.png"
-                                alt="Spanish Flag"
-                            />
-                            Spanish
-                        </FlagHeader>
-                        {shuffledSpanish.map((word) => (
-                            <WordCard
-                                key={`spanish-${word.id}`}
-                                selected={selectedSpanish === word.id}
-                                shake={shake}
-                                onClick={() => handleWordClick(word.id, "spanish")}
-                            >
-                                {word.spanish}
-                            </WordCard>
-                        ))}
-                    </WordGrid>
-                </WordPairRow>
+                <WordPairQuizComponent
+                    isPicturePhase={isPicturePhase}
+                    shuffledEnglish={shuffledEnglish}
+                    shuffledSpanish={shuffledSpanish}
+                    selectedEnglish={selectedEnglish}
+                    selectedSpanish={selectedSpanish}
+                    shake={shake}
+                    onWordClick={handleWordClick}
+                />
             </DashboardPanel>
         </StyledContainer>
     );

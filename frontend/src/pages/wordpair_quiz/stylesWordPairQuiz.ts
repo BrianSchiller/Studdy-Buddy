@@ -1,5 +1,32 @@
 import styled, { keyframes, css } from "styled-components";
 
+// Shared styles
+const cardBaseStyles = css<{ selected?: boolean }>`
+    background-color: ${({ selected }) => (selected ? "#2196F3" : "#f5f5f5")};
+    border: 1px solid ${({ selected }) => (selected ? "#1976D2" : "#ddd")};
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: ${({ selected }) => (selected ? "#1976D2" : "#e0e0e0")};
+    }
+`;
+
+const responsiveGridColumns = css<{ isPicturePhase?: boolean }>`
+    grid-template-columns: ${({ isPicturePhase }) => (isPicturePhase ? "repeat(2, 1fr)" : "none")};
+
+    @media (max-width: 768px) {
+        grid-template-columns: ${({ isPicturePhase }) => (isPicturePhase ? "repeat(2, 1fr)" : "none")};
+    }
+
+    @media (max-width: 480px) {
+        grid-template-columns: ${({ isPicturePhase }) => (isPicturePhase ? "repeat(2, 1fr)" : "none")};
+    }
+`;
+
+// Container styles
 export const StyledContainer = styled.div`
     display: flex;
     width: 100%;
@@ -14,6 +41,7 @@ export const StyledContainer = styled.div`
     }
 `;
 
+// Panel styles
 export const DashboardPanel = styled.div`
     width: 80%;
     display: flex;
@@ -30,11 +58,13 @@ export const DashboardPanel = styled.div`
     }
 `;
 
+// Timer Display
 export const TimerDisplay = styled.div`
     text-align: right;
     margin-bottom: 10px;
 `;
 
+// Progress Bar
 export const ProgressBar = styled.div<{ progress: number }>`
     width: 100%;
     height: 8px;
@@ -53,30 +83,37 @@ export const ProgressBar = styled.div<{ progress: number }>`
     }
 `;
 
-export const WordPairRow = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+// Word Grid
+export const WordGrid = styled.div<{ isPicturePhase?: boolean }>`
+    display: ${({ isPicturePhase }) => (isPicturePhase ? "grid" : "flex")};
+    ${responsiveGridColumns};
     gap: 20px;
-
-     @media (max-width: 768px) {
-        flex-direction: column;
-    }
-`;
-
-export const WordGrid = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
     width: 45%;
 
     @media (max-width: 768px) {
         width: 100%;
+        gap: 15px;
+    }
+
+    @media (max-width: 480px) {
+        gap: 10px;
     }
 `;
 
-// Wackel-Animation definieren
+// Word Pair Row
+export const WordPairRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    width: 100%;
+    gap: 20px;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+`;
+
+// Shake Animation
 const shakeAnimation = keyframes`
   0% { transform: translateX(0); }
   25% { transform: translateX(-5px); }
@@ -85,28 +122,18 @@ const shakeAnimation = keyframes`
   100% { transform: translateX(0); }
 `;
 
-// WordCard mit Shake-Animation
+// Word Card
 export const WordCard = styled.div<{ selected?: boolean; shake?: boolean }>`
+    ${cardBaseStyles};
     padding: 15px;
     font-size: 18px;
-    background-color: ${({ selected }) => (selected ? "#2196F3" : "#f5f5f5")};
-    color: ${({ selected }) => (selected ? "white" : "black")};
-    border: 1px solid ${({ selected }) => (selected ? "#1976D2" : "#ddd")};
-    border-radius: 8px;
     text-align: center;
-    cursor: pointer;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
 
     ${({ shake }) =>
         shake &&
         css`
             animation: ${shakeAnimation} 0.3s ease-in-out;
         `}
-
-    &:hover {
-        background-color: ${({ selected }) => (selected ? "#1976D2" : "#e0e0e0")};
-    }
 
     @media (max-width: 480px) {
         font-size: 16px;
@@ -114,28 +141,15 @@ export const WordCard = styled.div<{ selected?: boolean; shake?: boolean }>`
     }
 `;
 
-export const ImageCard = styled.div<{ selected?: boolean; shake?: boolean}>`
-    padding: 10px;
-    background-color: ${({ selected }) => (selected ? "#2196F3" : "#f5f5f5")};
-    border: 1px solid ${({ selected }) => (selected ? "#1976D2" : "#ddd")};
-    border-radius: 8px;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    img {
-        width: 80px;
-        height: 80px;
-        border-radius: 8px;
-
-        @media (max-width: 480px) {
-            width: 60px;
-            height: 60px;
-        }
-    }
+// Image Card
+export const ImageCard = styled.div<{ selected?: boolean; shake?: boolean; imageUrl?: string }>`
+    ${cardBaseStyles};
+    padding: 0;
+    width: 100px;
+    height: 100px;
+    background-image: url(${({ imageUrl }) => imageUrl});
+    background-size: cover;
+    background-position: center;
 
     ${({ shake }) =>
         shake &&
@@ -143,13 +157,13 @@ export const ImageCard = styled.div<{ selected?: boolean; shake?: boolean}>`
             animation: ${shakeAnimation} 0.3s ease-in-out;
         `}
 
-    &:hover {
-        background-color: ${({ selected }) => (selected ? "#1976D2" : "#e0e0e0")};
+    @media (max-width: 480px) {
+        width: 80px;
+        height: 80px;
     }
-
-    transition: all 0.3s ease;
 `;
 
+// Flag Header
 export const FlagHeader = styled.div`
     display: flex;
     flex-direction: column;
@@ -162,14 +176,12 @@ export const FlagHeader = styled.div`
     color: #333;
 
     & img {
-        width: 40px; /* Adjust flag size */
+        width: 40px;
         height: auto;
-        border-radius: 5px; /* Optional: Rounded corners for the flag */
+        border-radius: 5px;
 
-         @media (max-width: 480px) {
+        @media (max-width: 480px) {
             width: 30px;
         }
     }
 `;
-
-
