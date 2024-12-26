@@ -143,8 +143,8 @@ const WordPairQuizPage: React.FC = () => {
             <Menu />
             <DashboardPanel>
                 <NavigationHeader
-                    title="Match the Word Pairs"
-                    imageSrc="https://placehold.co/95"
+                    title="Match the English word/Image with the Spanish word."
+                    imageSrc="https://cdn-icons-png.flaticon.com/512/4712/4712009.png"
                     progress={(words.filter((word) => word.matched).length / words.length) * 100}
                     timer={timer}
                 />
@@ -208,3 +208,5 @@ const WordPairQuizPage: React.FC = () => {
 };
 
 export default WordPairQuizPage;
+
+//Daten sollen an das Backend gesendet werden, wenn go home button gedrückt wird

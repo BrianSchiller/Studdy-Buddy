@@ -176,7 +176,7 @@ const ExamPage: React.FC = () => {
             )}
 
             <QuestionContainer>
-                <QuestionText>{currentQuestion?.question}</QuestionText>
+                <QuestionText>{currentQuestion?.question} <span>(Only enter the number)</span> </QuestionText>
                 <InputField
                     type="text"
                     value={userAnswer}
