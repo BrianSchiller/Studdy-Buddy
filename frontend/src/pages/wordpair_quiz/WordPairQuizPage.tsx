@@ -152,12 +152,14 @@ const WordPairQuizPage: React.FC = () => {
     <WordGrid isPicturePhase={isPicturePhase}>
         <FlagHeader>
             {!isPicturePhase && (
-                <img
-                    src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png"
-                    alt="English Flag"
-                />
+                <>
+                    <img
+                        src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png"
+                        alt="English Flag"
+                    />
+                    English
+                </>
             )}
-            {isPicturePhase ? "Pictures" : "English"}
         </FlagHeader>
         {shuffledEnglish.map((word) =>
             isPicturePhase ? (
