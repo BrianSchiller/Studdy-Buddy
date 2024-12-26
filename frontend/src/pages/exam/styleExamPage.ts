@@ -161,3 +161,10 @@ export const JobTable = styled.div`
     font-size: 16px;
     line-height: 1.6;
 `;
+
+export const HelperText = styled.span`
+    font-size: 12px;
+    color: gray;
+    margin-top: 5px;
+    display: block;
+`;

@@ -17,6 +17,7 @@ import {
     InputField,
     SubmitButtonWrapper,
     SubmitButton,
+    HelperText
 } from "./styleExamPage";
 import { fetchExam, submitExam } from "../../api";
 
@@ -176,7 +177,10 @@ const ExamPage: React.FC = () => {
             )}
 
             <QuestionContainer>
-                <QuestionText>{currentQuestion?.question} <span>(Only enter the number)</span> </QuestionText>
+                <QuestionText>{currentQuestion?.question}  </QuestionText>
+                    <HelperText>
+                    Only enter the number
+                    </HelperText> 
                 <InputField
                     type="text"
                     value={userAnswer}
