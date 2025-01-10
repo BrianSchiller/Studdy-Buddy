@@ -92,8 +92,8 @@ const QuizPage: React.FC = () => {
             <Menu />
             <DashboardPanel>
                 <NavigationHeader
-                    title="Click on the right matching word"
-                    imageSrc="https://placehold.co/95"
+                    title="Click on the right matching word."
+                    imageSrc="https://cdn-icons-png.flaticon.com/512/4712/4712009.png"
                     currentIndex={currentIndex}
                     totalQuestions={questions.length}
                     progress={(currentIndex / questions.length) * 100}

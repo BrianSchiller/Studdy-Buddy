@@ -68,6 +68,12 @@ const StyledCard = styled.div`
     }
 `;
 
+const topicIcons: Record<string, string> = {
+    animals: "https://cdn-icons-png.flaticon.com/512/616/616408.png", // Paw print icon
+    jobs: "https://cdn-icons-png.flaticon.com/512/3135/3135768.png", // Briefcase icon
+    fruits: "https://cdn-icons-png.flaticon.com/512/415/415733.png", // Apple icon
+};
+
 // Styled Component für eine deaktivierte Karte
 // const DisabledCard = styled(Card)`
 //     background-color: #f0f0f0;
@@ -140,7 +146,7 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({ username }) => {
                 return (
                     <StyledCard key={topic.topic_id}>
                         <h3>{topic.topic_name}</h3>
-                        <img src="https://placehold.co/100" alt={topic.topic_name} />
+                        <img src={topicIcons[topic.topic_name.toLowerCase()] || ""} alt={topic.topic_name} />
 
                         {/* Start Button */}
                         <Button

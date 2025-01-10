@@ -127,8 +127,8 @@ const FillSentenceQuizPage: React.FC = () => {
             <Menu />
             <DashboardPanel>
                 <NavigationHeader
-                    title="Complete the sentence"
-                    imageSrc="https://placehold.co/95"
+                    title="Complete the sentence."
+                    imageSrc="https://cdn-icons-png.flaticon.com/512/4712/4712009.png"
                     progress={(currentIndex / questions.length) * 100}
                     currentIndex={currentIndex}
                     totalQuestions={questions.length}
