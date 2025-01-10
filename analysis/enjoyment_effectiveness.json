@@ -1,0 +1,242 @@
+{
+    "1": {
+        "Effectiveness": {
+            "A": 2,
+            "B": 3,
+            "C": 1
+        },
+        "Enjoyment": {
+            "A": 3,
+            "B": 2,
+            "C": 1
+        }
+    },
+    "2": {
+        "Effectiveness": {
+            "A": 3,
+            "B": 2,
+            "C": 1
+        },
+        "Enjoyment": {
+            "A": 3,
+            "B": 2,
+            "C": 1
+        }
+    },
+    "3": {
+        "Effectiveness": {
+            "A": 2,
+            "B": 1,
+            "C": 3
+        },
+        "Enjoyment": {
+            "A": 2,
+            "B": 1,
+            "C": 3
+        }
+    },
+    "4": {
+        "Effectiveness": {
+            "A": 2,
+            "B": 3,
+            "C": 1
+        },
+        "Enjoyment": {
+            "A": 3,
+            "B": 1,
+            "C": 2
+        }
+    },
+    "5": {
+        "Effectiveness": {
+            "A": 1,
+            "B": 3,
+            "C": 2
+        },
+        "Enjoyment": {
+            "A": 1,
+            "B": 2,
+            "C": 3
+        }
+    },
+    "6": {
+        "Effectiveness": {
+            "A": 2,
+            "B": 1,
+            "C": 3
+        },
+        "Enjoyment": {
+            "A": 3,
+            "B": 2,
+            "C": 1
+        }
+    },
+    "7": {
+        "Effectiveness": {
+            "A": 3,
+            "B": 2,
+            "C": 1
+        },
+        "Enjoyment": {
+            "A": 3,
+            "B": 1,
+            "C": 2
+        }
+    },
+    "8": {
+        "Effectiveness": {
+            "A": 1,
+            "B": 3,
+            "C": 2
+        },
+        "Enjoyment": {
+            "A": 1,
+            "B": 2,
+            "C": 3
+        }
+    },
+    "9": {
+        "Effectiveness": {
+            "A": 1,
+            "B": 3,
+            "C": 2
+        },
+        "Enjoyment": {
+            "A": 2,
+            "B": 1,
+            "C": 3
+        }
+    },
+    "10": {
+        "Effectiveness": {
+            "A": 3,
+            "B": 1,
+            "C": 2
+        },
+        "Enjoyment": {
+            "A": 3,
+            "B": 1,
+            "C": 2
+        }
+    },
+    "11": {
+        "Effectiveness": {
+            "A": 3,
+            "B": 2,
+            "C": 1
+        },
+        "Enjoyment": {
+            "A": 1,
+            "B": 2,
+            "C": 3
+        }
+    },
+    "12": {
+        "Effectiveness": {
+            "A": 1,
+            "B": 2,
+            "C": 3
+        },
+        "Enjoyment": {
+            "A": 1,
+            "B": 3,
+            "C": 2
+        }
+    },
+    "13": {
+        "Effectiveness": {
+            "A": 2,
+            "B": 1,
+            "C": 3
+        },
+        "Enjoyment": {
+            "A": 3,
+            "B": 1,
+            "C": 2
+        }
+    },
+    "14": {
+        "Effectiveness": {
+            "A": 2,
+            "B": 1,
+            "C": 3
+        },
+        "Enjoyment": {
+            "A": 1,
+            "B": 2,
+            "C": 3
+        }
+    },
+    "15": {
+        "Effectiveness": {
+            "A": 1,
+            "B": 3,
+            "C": 2
+        },
+        "Enjoyment": {
+            "A": 2,
+            "B": 3,
+            "C": 1
+        }
+    },
+    "16": {
+        "Effectiveness": {
+            "A": 3,
+            "B": 1,
+            "C": 2
+        },
+        "Enjoyment": {
+            "A": 3,
+            "B": 2,
+            "C": 1
+        }
+    },
+    "17": {
+        "Effectiveness": {
+            "A": 1,
+            "B": 3,
+            "C": 2
+        },
+        "Enjoyment": {
+            "A": 1,
+            "B": 3,
+            "C": 2
+        }
+    },
+    "18": {
+        "Effectiveness": {
+            "A": 2,
+            "B": 1,
+            "C": 3
+        },
+        "Enjoyment": {
+            "A": 2,
+            "B": 1,
+            "C": 3
+        }
+    },
+    "19": {
+        "Effectiveness": {
+            "A": 1,
+            "B": 2,
+            "C": 3
+        },
+        "Enjoyment": {
+            "A": 1,
+            "B": 2,
+            "C": 3
+        }
+    },
+    "20": {
+        "Effectiveness": {
+            "A": 3,
+            "B": 2,
+            "C": 1
+        },
+        "Enjoyment": {
+            "A": 2,
+            "B": 3,
+            "C": 1
+        }
+    }
+}

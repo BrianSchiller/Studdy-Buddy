@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import check_user_exists, update_user_progress, get_random_words, WordListView, UserProgressListView, TopicListView, get_exam, submit_exam
+from .views import check_user_exists, update_user_progress, get_random_words, WordListView, UserProgressListView, TopicListView, get_exam, submit_exam, user_results
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -13,6 +13,7 @@ urlpatterns = [
     path('random_words/<int:amount>/', get_random_words, name='random_words'),
     path('exam/<int:topic_id>/', get_exam, name='get_exam'),
     path('submit_exam/<int:exam_id>/<str:username>/', submit_exam, name='submit_exam'),
+    path('user-results/', user_results, name='user_results'),
 ]
 
 if settings.DEBUG:

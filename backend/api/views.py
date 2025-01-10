@@ -8,7 +8,8 @@ from django.http import JsonResponse
 from django.db import transaction
 from collections import Counter
 from random import shuffle
-from django.db.models import Max
+from django.db.models import Max, Case, When, IntegerField
+
 
 
 def check_user_exists(request, username):
@@ -192,6 +193,47 @@ class UserProgressListView(APIView):
         ]
 
         return Response(progress_data)
+    
+
+def get_user_results(user):
+    user_progress = UserProgress.objects.filter(user=user).select_related('topic')
+
+    # Annotate mistakes by level
+    progress_data = []
+    for progress in user_progress:
+        mistakes = Mistake.objects.filter(user_progress=progress).aggregate(
+            Quiz1=Max(Case(When(level=1, then='mistakes_count'), default=0, output_field=IntegerField())),
+            Quiz2=Max(Case(When(level=2, then='mistakes_count'), default=0, output_field=IntegerField())),
+            Quiz3=Max(Case(When(level=3, then='mistakes_count'), default=0, output_field=IntegerField())),
+            Quiz4=Max(Case(When(level=4, then='mistakes_count'), default=0, output_field=IntegerField())),
+        )
+
+        # Fetch exam score for the topic
+        exam_score = ExamResult.objects.filter(
+            user=user,
+            exam__topic=progress.topic
+        ).values('score').first()
+
+        progress_data.append({
+            'topic_id': progress.topic.id,
+            'topic': progress.topic.name,
+            'level': progress.level,
+            'format': ExperimentGroup.objects.filter(user=user, topic=progress.topic)
+                            .values_list('presentation_style', flat=True).first(),
+            'quiz1': mistakes['Quiz1'],
+            'quiz2': mistakes['Quiz2'],
+            'quiz3': mistakes['Quiz3'],
+            'quiz4': mistakes['Quiz4'],
+            'exam_score': exam_score['score'] if exam_score else None,
+        })
+
+    return progress_data
+
+
+from api.utils import UserResults
+def user_results(request):
+    data = UserResults.fetch_all_user_data()  # You can also use print_as_json() if needed
+    return JsonResponse(data, safe=False)
 
 
 @api_view(['GET'])
